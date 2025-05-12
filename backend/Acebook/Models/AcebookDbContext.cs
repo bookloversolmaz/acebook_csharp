@@ -7,11 +7,13 @@ public class AcebookDbContext : DbContext
     public DbSet<User>? Users { get; set; }
 
     public string? DbPath { get; }
+    string? DatabaseUsernameArg = Environment.GetEnvironmentVariable("DATABASE_USERNAME");
 
       string? DatabaseUserameArg = Environment.GetEnvironmentVariable("DATABASE_USERNAME");
 
     public string? GetDatabaseName() {
       string? DatabaseNameArg = Environment.GetEnvironmentVariable("DATABASE_NAME");
+
 
       if( DatabaseNameArg == null)
       {
