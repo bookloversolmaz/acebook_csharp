@@ -5,10 +5,13 @@ using System.Text;
 using System;
 using DotNetEnv;
 
+
 Env.Load();
 
 var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
