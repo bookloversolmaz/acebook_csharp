@@ -3,6 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System;
+using DotNetEnv;
+
+Env.Load();
 
 var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
