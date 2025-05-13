@@ -15,10 +15,12 @@ public class TokensController : ControllerBase
         _logger = logger;
     }
 
+    //LOG-IN ROUTE
     [Route("api/tokens")]
     [HttpPost]
     public IActionResult Create([FromBody] UserCredentials credentials) {
       AcebookDbContext dbContext = new AcebookDbContext();
+      
       User? user = dbContext.Users.FirstOrDefault(user => user.Email == credentials.Email);
       if(user != null && user.Password == credentials.Password)
       {

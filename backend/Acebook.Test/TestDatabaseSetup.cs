@@ -36,7 +36,7 @@ public class TestDatabaseSetup
 
         using var cmd = new NpgsqlCommand(@"
             INSERT INTO ""Users"" (""Email"", ""Password"")
-            VALUES ('francine@email.com', '12345678')
+            VALUES ('francine@email.com', 'Secret78!')
         ", conn);
         cmd.ExecuteNonQuery();
     }

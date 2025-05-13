@@ -5,6 +5,7 @@ using System.Net;
 
 namespace Acebook.Tests
 {
+  //this tests both login(TokensController) and signup(UsersController) functions
 [TestFixture]
   public class UserManagement
   {
@@ -23,14 +24,14 @@ namespace Acebook.Tests
       _client.Dispose();
     }
 
-    [Test]
+    [Test] //1
     public async Task SignUp_ValidCredentials_ReturnsSuccess()
     {
       // Arrange
       var userData = new
       {
-        email = "francine@email.com",
-        password = "12345678"
+        email = "freida@email.com",
+        password = "Secret78!"
       };
 
       // Act
@@ -40,14 +41,84 @@ namespace Acebook.Tests
       response.Should().BeSuccessful();
     }
 
-    [Test]
+    [Test]// 2.Test that password declared invalid if it doesn't meet requirement: 8 chars long, has special chars and is alpha-numeric 
+    public async Task SignUp_InvalidPassword_ReturnsErrorMsg()
+    {
+      var  userData = new
+      {
+        email = "jane@email.com",
+        password = "fail"
+      };
+      var response = await _client.PostAsJsonAsync("/api/users", userData);
+
+      string expected = "Invalid password. Must be 8 characters long, have special chracters and be alphanumeric";
+    
+      var content = await response.Content.ReadAsStringAsync();
+
+    // Assert
+    Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
+    }
+
+    [Test] //3.Check that email provided is valid
+    public async Task SignUp_InvalidEmail_ReturnsErrorMsg()
+    {
+      var  userData = new
+      {
+        email = "janeemailcom",
+        password = "Secret78!"
+      };
+      var response = await _client.PostAsJsonAsync("/api/users", userData);
+
+      string expected = "Invalid email. Please provide a valid email";
+    
+      var content = await response.Content.ReadAsStringAsync();
+
+    // Assert
+    Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
+    }
+    [Test]//4. Checks that a username is not already being used in db
+    public async Task SignUp_EmailDuplicated_ReturnsErrorMsg()
+    {
+      var  userData1 = new
+      {
+        email = "jt@email.com",
+        password = "Secret78!"
+      };
+      await _client.PostAsJsonAsync("/api/users", userData1);
+      
+      var  userData2 = new
+      {
+        email = "jt@email.com",
+        password = "Secret78!"
+      };
+      var response = await _client.PostAsJsonAsync("/api/users", userData2);
+
+      string expected = "Email already in use. Please provide a different email";
+    
+    //  var content = await response.Content.ReadAsStringAsync();
+
+    // Assert
+    Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
+    }
+
+    // [Test]//Checks that a email is not already being used in db
+
+    [Test]//5. login
     public async Task CreateToken_ValidCredentials_Succeeds()
     {
+      var userData = new
+      {
+        email = "Joan@email.com",
+        password = "Secret78!"
+      };
+
+      // Act
+       await _client.PostAsJsonAsync("/api/users", userData);
       // Arrange
       var credentials = new
       {
-        email = "francine@email.com",
-        password = "12345678"
+       email = "Joan@email.com",
+        password = "Secret78!"
       };
 
       // Act
@@ -57,14 +128,14 @@ namespace Acebook.Tests
       response.Should().BeSuccessful();
     }
 
-    [Test]
+    [Test]//6. login
     public async Task CreateToken_InvalidEmail_Fails()
     {
       // Arrange
       var credentials = new
       {
         email = "not_a_user@email.com",
-        password = "12345678"
+        password = "Secret78!"
       };
 
       // Act
@@ -74,13 +145,14 @@ namespace Acebook.Tests
       response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    [Test]
+    [Test]//7. login
     public async Task CreateToken_InvalidPassword_Fails()
     {
+      
       // Arrange
       var credentials = new
       {
-        email = "francine@email.com",
+        email = "frank@email.com",
         password = "incorrectpassword"
       };
 
