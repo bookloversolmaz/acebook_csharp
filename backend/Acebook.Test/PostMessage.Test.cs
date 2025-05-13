@@ -14,7 +14,6 @@ namespace Acebook.Tests
     public class PostMessage
     {
     private HttpClient _client;
-    // TODO: use test database
 
     [SetUp]
     // Create new user, sign in as user and then use that for the tests
@@ -32,8 +31,14 @@ namespace Acebook.Tests
       // Act
       await _client.PostAsJsonAsync("/api/users", userData); // Created new user
       var response = await _client.PostAsJsonAsync("/api/tokens", userData); // Signed in new user
+      Console.WriteLine("this is the response");
+      Console.WriteLine(response);
       var Json = await response.Content.ReadFromJsonAsync<JsonElement>(); // Extracted the json data only from the response
+      Console.WriteLine("this is the json");
+      Console.WriteLine(Json);
       var token = Json.GetProperty("token").GetString(); // Extracted the token as a string from the Json
+      Console.WriteLine("this is the token");
+      Console.WriteLine(token);
       _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token); // Whenever _client sends something, it has the authorisation containing the token, which is a JWT token (bearer) and here is the token
     } 
 
@@ -57,7 +62,8 @@ namespace Acebook.Tests
 
       // Act
       var response = await _client.PostAsJsonAsync("/api/posts", PostData);
-
+      Console.WriteLine("reached test body");
+      Console.WriteLine(response);
       // Assert
       response.Should().BeSuccessful();
     }
@@ -114,5 +120,5 @@ namespace Acebook.Tests
 //     }
 //   }
 // }
-    }
-    }
+}
+}

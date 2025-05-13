@@ -52,14 +52,21 @@ public class PostsController : ControllerBase
     [Route("api/posts")]
     [HttpPost]
     // FromBody tells the server to find the post object in the body of the request
-    public IActionResult Create([FromBody] Post post) // Creates the post and send it to the database
+    public async Task<IActionResult> Create() // Creates the post and send it to the database
     {
         AcebookDbContext dbContext = new AcebookDbContext();
-        
+        _logger.LogInformation("CREATING A POST");
+        using var reader = new StreamReader(Request.Body);
+        var body = await reader.ReadToEndAsync();
+
+    Console.WriteLine("Raw request body:");
+    Console.WriteLine(body);
+    Post post = new Post {Message = "this is a message"};
         // Get the current user's ID from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)
         {
+            Console.WriteLine("hello");
             return BadRequest("User ID not found in token");
         }
         var UserId = int.Parse(userIdClaim.Value);
@@ -79,5 +86,6 @@ public class PostsController : ControllerBase
         };
         
         return Created("", new { _Id = post._Id, post = postDto, token = newToken } );
+        // return Ok();
     }
 }
