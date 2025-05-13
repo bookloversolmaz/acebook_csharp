@@ -65,6 +65,7 @@ describe("authentication service", () => {
 
   describe("signup", () => {
     test("calls the backend url for a token", async () => {
+      const testUsername = "Test";
       const testEmail = "test@testEmail.com";
       const testPassword = "12345678";
 
@@ -72,7 +73,7 @@ describe("authentication service", () => {
         status: 201,
       });
 
-      await signup(testEmail, testPassword);
+      await signup(testUsername, testEmail, testPassword);
 
       // This is an array of the arguments that were last passed to fetch
       const fetchArguments = fetch.mock.lastCall;
@@ -82,12 +83,13 @@ describe("authentication service", () => {
       expect(url).toEqual(`${BACKEND_URL}/users`);
       expect(options.method).toEqual("POST");
       expect(options.body).toEqual(
-        JSON.stringify({ email: testEmail, password: testPassword })
+        JSON.stringify({ username: testUsername, email: testEmail, password: testPassword })
       );
       expect(options.headers["Content-Type"]).toEqual("application/json");
     });
 
     test("returns nothing if the signup request was a success", async () => {
+      const testUsername = "Test";
       const testEmail = "test@testEmail.com";
       const testPassword = "12345678";
 
@@ -95,11 +97,12 @@ describe("authentication service", () => {
         status: 201,
       });
 
-      const token = await signup(testEmail, testPassword);
+      const token = await signup(testUsername, testEmail, testPassword);
       expect(token).toEqual(undefined);
     });
 
     test("throws an error if the request failed", async () => {
+      const testUsername = "Test";
       const testEmail = "test@testEmail.com";
       const testPassword = "12345678";
 
@@ -111,7 +114,7 @@ describe("authentication service", () => {
       );
 
       try {
-        await signup(testEmail, testPassword);
+        await signup(testUsername, testEmail, testPassword);
       } catch (err) {
         expect(err.message).toEqual(
           "Received status 400 when signing up. Expected 201"
