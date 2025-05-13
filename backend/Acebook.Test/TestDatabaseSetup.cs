@@ -4,7 +4,7 @@ using NUnit.Framework;
 [SetUpFixture]
 public class TestDatabaseSetup
 {
-    private readonly string _connectionString = "Host=localhost;Database=acebook_csharp_test;Username=postgres;";
+    private readonly string _connectionString =$"Host=localhost;database=acebook_csharp_test;Username={Environment.GetEnvironmentVariable("DATABASE_USERNAME")};";
 
     [OneTimeSetUp]
     public void GlobalSetup()

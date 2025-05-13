@@ -12,11 +12,9 @@ namespace acebook.Controllers;
 public class PostsController : ControllerBase
 {
     private readonly ILogger<PostsController> _logger;
-    private readonly ITimeProvider _timeProvider; // timeprovider taken from ITimeProvider interface
     public PostsController(ILogger<PostsController> logger)
     {
         _logger = logger;
-        _timeProvider = timeProvider;
     }
 
     [Authorize]
@@ -68,7 +66,7 @@ public class PostsController : ControllerBase
         var user = dbContext.Users.Find(UserId);
         var newToken = TokenService.GenerateToken(user);
         post.UserId = UserId;
-        post.CreatedAt = _timeProvider.UtcNow;
+        post.CreatedAt = DateTime.UtcNow;
         dbContext.Posts.Add(post);
         dbContext.SaveChanges();
 

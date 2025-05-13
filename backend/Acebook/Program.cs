@@ -14,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<ITimeProvider, SystemTimeProvider>(); // Says that anytime anything asks for an ITimeProvider, actually pass them SystemTimeProvider
 
 // Add Swagger/OpenAPI support
 builder.Services.AddEndpointsApiExplorer();

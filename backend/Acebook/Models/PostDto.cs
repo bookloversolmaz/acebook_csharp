@@ -1,5 +1,5 @@
 namespace acebook.Models;
-
+// this is for responses
 public class PostDto
 {
     public int _Id { get; set; }

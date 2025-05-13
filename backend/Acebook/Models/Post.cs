@@ -1,6 +1,6 @@
 namespace acebook.Models;
 using System.ComponentModel.DataAnnotations;
-
+// this is for posts
 public class Post
 {
   [Key]
