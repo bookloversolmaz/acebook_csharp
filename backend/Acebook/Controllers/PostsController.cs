@@ -52,7 +52,6 @@ public class PostsController : ControllerBase
     public IActionResult Create([FromBody] Post post)
     {
         AcebookDbContext dbContext = new AcebookDbContext();
-        
         // Get the current user's ID from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)

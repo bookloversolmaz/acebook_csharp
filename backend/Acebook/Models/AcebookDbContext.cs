@@ -8,8 +8,6 @@ public class AcebookDbContext : DbContext
 
     public string? DbPath { get; }
 
-      string? DatabaseUserameArg = Environment.GetEnvironmentVariable("DATABASE_USERNAME");
-
     public string? GetDatabaseName() {
       string? DatabaseNameArg = Environment.GetEnvironmentVariable("DATABASE_NAME");
 
@@ -31,7 +29,7 @@ public class AcebookDbContext : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(@$"Host=localhost;Username={DatabaseUserameArg};Password=1234;Database=" + GetDatabaseName());
+        => optionsBuilder.UseNpgsql(@$"Host=localhost;Username={DatabaseUsernameArg};Password=1234;Database=" + GetDatabaseName());
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
