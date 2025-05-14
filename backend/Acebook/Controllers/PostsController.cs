@@ -55,12 +55,6 @@ public class PostsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] Post post) // Creates the post and send it to the database
     {
         AcebookDbContext dbContext = new AcebookDbContext();
-        _logger.LogInformation("CREATING A POST");
-        using var reader = new StreamReader(Request.Body);
-        var body = await reader.ReadToEndAsync();
-
-    Console.WriteLine("Raw request body:");
-
         // Get the current user's ID from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)
