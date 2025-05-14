@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
+using BCrypt;
 using acebook.Models;
 
 namespace acebook.Controllers;
@@ -14,6 +15,8 @@ public class UsersController : ControllerBase
     {
         _logger = logger;
     }
+
+  
 
     //SIGN-UP ROUTE
     [Route("api/users")]
@@ -49,10 +52,12 @@ public class UsersController : ControllerBase
         return BadRequest(); 
       }
       else{  
-      dbContext.Users.Add(user);
-      dbContext.SaveChanges();
-      string location = "api/users/" + user._Id;
-      return Created();
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+        dbContext.Users.Add(user);
+        dbContext.SaveChanges();
+        string location = "api/users/" + user._Id;
+        return Created();
       }
       }
       catch (Exception e)

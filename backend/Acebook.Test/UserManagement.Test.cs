@@ -2,6 +2,8 @@ using NUnit.Framework;
 using FluentAssertions;
 using System.Net.Http.Json;
 using System.Net;
+using BCrypt.Net;
+using Npgsql;
 
 namespace Acebook.Tests
 {
@@ -10,6 +12,8 @@ namespace Acebook.Tests
   public class UserManagement
   {
     private HttpClient _client;
+    private readonly string _connectionString = $"Host=localhost;Database=acebook_csharp_test;Username={Environment.GetEnvironmentVariable("DATABASE_USERNAME")};";
+
 
     [SetUp]
     public void Setup()
@@ -37,7 +41,7 @@ namespace Acebook.Tests
 
       // Act
       var response = await _client.PostAsJsonAsync("/api/users", userData);
-      Console.WriteLine($"response statsus code is {response.StatusCode} ");
+
       // Assert
       Assert.That(response.IsSuccessStatusCode, Is.True);
     }
@@ -54,6 +58,30 @@ namespace Acebook.Tests
       var response = await _client.PostAsJsonAsync("/api/users", userData);
   
       Assert.That(response.IsSuccessStatusCode, Is.False); 
+    }
+
+    [Test] // checks that a password is hashed
+    public async Task SignUp_PasswordHashedInDB_ReturnsSuccess(){
+
+      var userData = new
+      {
+        username = "Lisa",
+        email = "lisa@email.com",
+        password = "Secret123!"
+      };
+
+      var response = await _client.PostAsJsonAsync("/api/users", userData);
+
+      await using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+      await using var cmd = new NpgsqlCommand("SELECT \"Password\" FROM \"Users\" WHERE \"Email\" = @Email", conn);
+      cmd.Parameters.AddWithValue("@Email", "lisa@email.com");
+      var passwordHash = (string?)await cmd.ExecuteScalarAsync();
+
+      Console.WriteLine($"passwordhash is {passwordHash}");
+      var result = BCrypt.Net.BCrypt.Verify("Secret123!", passwordHash);
+      Assert.That(result, Is.True);
     }
 
     [Test] //Check that email provided is valid
@@ -155,7 +183,7 @@ namespace Acebook.Tests
       // Arrange
       var credentials = new
       {
-       email = "joan@email.com",
+        email = "joan@email.com",
         password = "Secret78!"
       };
 
@@ -178,7 +206,8 @@ namespace Acebook.Tests
 
       // Act
       var response = await _client.PostAsJsonAsync("/api/tokens", credentials);
-
+      Console.WriteLine($"credentials.email is {credentials.email}");
+      Console.WriteLine($"response.StatusCode is {response}");
       // Assert
       response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -186,7 +215,15 @@ namespace Acebook.Tests
     [Test]// login
     public async Task CreateToken_InvalidPassword_Fails()
     {
-      
+
+      var userData = new
+      {
+        username = "Franck",
+        email = "frank@email.com",
+        password = "Secret123!"
+      }; 
+
+      await _client.PostAsJsonAsync("/api/users", userData);
       // Arrange
       var credentials = new
       {
@@ -201,4 +238,4 @@ namespace Acebook.Tests
       response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
   }
-}
+ }
