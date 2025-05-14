@@ -59,7 +59,6 @@ public class PostsController : ControllerBase
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)
         {
-            Console.WriteLine("hello");
             return BadRequest("User ID not found in token");
         }
         var UserId = int.Parse(userIdClaim.Value);
