@@ -30,6 +30,7 @@ namespace Acebook.Tests
       // Arrange
       var userData = new
       {
+        username = "Fran",
         email = "freida@email.com",
         password = "Secret78!"
       };
