@@ -52,11 +52,8 @@ namespace Acebook.Tests
       var response = await _client.PostAsJsonAsync("/api/users", userData);
 
       string expected = "Invalid password. Must be 8 characters long, have special chracters and be alphanumeric";
-    
-      var content = await response.Content.ReadAsStringAsync();
-
-    // Assert
-    Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
+  
+      Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
     }
 
     [Test] //3.Check that email provided is valid
@@ -70,13 +67,10 @@ namespace Acebook.Tests
       var response = await _client.PostAsJsonAsync("/api/users", userData);
 
       string expected = "Invalid email. Please provide a valid email";
-    
-      var content = await response.Content.ReadAsStringAsync();
 
-    // Assert
-    Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
+      Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
     }
-    [Test]//4. Checks that a username is not already being used in db
+    [Test]//4. Checks that an email is not already being used in db
     public async Task SignUp_EmailDuplicated_ReturnsErrorMsg()
     {
       var  userData1 = new
@@ -95,13 +89,25 @@ namespace Acebook.Tests
 
       string expected = "Email already in use. Please provide a different email";
     
-    //  var content = await response.Content.ReadAsStringAsync();
-
-    // Assert
-    Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
+      Assert.That(response.IsSuccessStatusCode, Is.False, expected); 
     }
+    [Test] // Signup - Checks that an email is provided else an error msg is given
+    public async Task SignUp_NoEmailProvided_ReturnsErrMsg()
+    {
+      var userData = new 
+      {
+        email = "",
+        password = "Secret12!"
+      };
 
-    // [Test]//Checks that a email is not already being used in db
+      var response = await _client.PostAsJsonAsync("/api/users", userData);
+
+      string expected = "No email provided. Please provide a valid email address.";
+
+      Assert.That(response.IsSuccessStatusCode, Is.False);
+    }
+    // [Test] // Signup - Checks that a username is provided else an error msg is given
+    // [Test] // Signup - Checks that a username is not already being used in db
 
     [Test]//5. login
     public async Task CreateToken_ValidCredentials_Succeeds()

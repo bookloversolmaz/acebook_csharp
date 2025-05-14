@@ -31,13 +31,13 @@ public class UsersController : ControllerBase
       Console.WriteLine($"{user.Email} exists is {EmailExists}");
 
       if(EmailExists){
-        return BadRequest("Email already in use. Please provide a different email"); 
+        return BadRequest(); 
       }
       else if(user.Email == null || validateEmailRegex.IsMatch(user.Email) == false){
-          return BadRequest("Invalid email. Please provide a valid email"); 
+          return BadRequest(); 
       }
       else if(user.Password == null || validatePasswordRegex.IsMatch(user.Password) == false){
-        return BadRequest("Invalid password. Must be 8 characters long, have special chracters and be alphanumeric"); 
+        return BadRequest(); 
       } 
       else{
       dbContext.Users.Add(user);
