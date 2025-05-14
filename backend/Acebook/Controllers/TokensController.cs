@@ -15,17 +15,23 @@ public class TokensController : ControllerBase
         _logger = logger;
     }
 
+    //LOG-IN ROUTE
     [Route("api/tokens")]
     [HttpPost]
     public IActionResult Create([FromBody] UserCredentials credentials) {
       Console.WriteLine("writeline in tokens contr");
       AcebookDbContext dbContext = new AcebookDbContext();
+      
       User? user = dbContext.Users.FirstOrDefault(user => user.Email == credentials.Email);
-      if(user != null && user.Password == credentials.Password)
-      {
+      Console.WriteLine($"user is {user}");
+
+      bool isPasswordValid = user != null && BCrypt.Net.BCrypt.Verify(credentials.Password, user.Password);
+
+      if(isPasswordValid)
+      { 
         string token = TokenService.GenerateToken(user);
         return Created("", new { token });
-      }
+      } 
       else
       {
         return Unauthorized();
