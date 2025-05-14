@@ -18,6 +18,7 @@ public class TokensController : ControllerBase
     [Route("api/tokens")]
     [HttpPost]
     public IActionResult Create([FromBody] UserCredentials credentials) {
+      Console.WriteLine("writeline in tokens contr");
       AcebookDbContext dbContext = new AcebookDbContext();
       User? user = dbContext.Users.FirstOrDefault(user => user.Email == credentials.Email);
       if(user != null && user.Password == credentials.Password)
