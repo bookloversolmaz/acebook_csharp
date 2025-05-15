@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor} from "@testing-library/react";
+import { render, screen, waitFor} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
 import { FeedPage } from "../../src/pages/Feed/FeedPage"; // Component being tested, displays the feed post
@@ -28,6 +29,7 @@ describe("Feed Page", () => {
   beforeEach(() => { // Runs before each test, ensuring that the local storage token is cleared before each test runs to avoid state pollution.
     window.localStorage.removeItem("token");
   });
+
   // This test checks whether the posts fetched from the backend are displayed correctly in the FeedPage.
   test("It displays posts from the backend", async () => {
     window.localStorage.setItem("token", "testToken"); // Set a test token in local storage to simulate user
@@ -50,54 +52,40 @@ describe("Feed Page", () => {
     expect(navigateMock).toHaveBeenCalledWith("/login");
   });
 
-  // handlesubmit can call createPost
+  // check that user can post and display posts
   test("Can add a new post to the feed page", async () => {
     // Arrange
-    // set a token to simulate an authenticated user
-    window.localStorage.setItem("token", "testToken"); // Set a test token in local storage to simulate user
-    const mockPosts = [{ _id: "12345", message: "getcreate mock" }]; // Creates a mock post
-    getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" }); // Mock API response
-    // Then renders page 
+    // Use userEvent rather than fireevent, which simulates full interactions rather than dispatching dom events
+      // userEvent simulates real user interactions, such as typing, clicking etc
+    const user = userEvent.setup() // must invoke userEvent before component is rendered
+    // simulate user login with the test token first
+    window.localStorage.setItem("token", "testToken");
+    createPost.mockResolvedValue({post: // tells createpost from vi.mock ti resolve with the given post when its called
+    // When `FeedPage` is rendered, it will eventually call `createPost` after the form is submitted.
+    // You must define how the mock should behave *before* it's called — otherwise, the mock might return `undefined`, reject unexpectedly, or just not behave as expected.
+    // Think of this as setting up the backend’s behaviour before the app interacts with it.
+    {
+      _id: "1",
+      Message: "test post",
+    },
+    });
+
+      // Then renders page 
     render(<FeedPage />);
 
     // Act
-    // wait for feed page to be rendered
-    const post = await screen.findByRole("article"); // wait for the post to be rendered
+    // Simulate user typing in the input and submitting the form
+    // Selects the text input by its label "Message:"
+    const input = screen.getByLabelText(/message/i);
+    await user.type(input, "test post");
 
+    const submitButton = screen.getByRole("button", { name: /submit/i });
+    await user.click(submitButton);
 
-      createPost.mockResolvedValue({
-    post: 
-    { 
-      _id: "1", Message: "test post",
-    },
+    // Assert
+    // createPost was called with correct arguments (token and message)
+    await waitFor(() => {
+      expect(createPost).toHaveBeenCalledWith("testToken", "test post");
     });
-    await createPost("test post");
-    // createPost.mockResolvedValue({
-    // post: 
-    // { 
-    //   _id: "1", Message: "test post",
-    // },
-    // });
-    // Assert: Wait for getPosts to resolve
-    expect(createPost).toHaveBeenCalledWith("test post");
-
   });
-
-  // check if createpost correctly displays input
-
-    //   // ACT: Simulate user filling in and submitting the form
-    // const input = screen.getByLabelText(/message/i);
-    // fireEvent.change(input, { target: { value: "test post" } });
-
-    // const submitButton = screen.getByRole("button", { name: /submit/i });
-    // fireEvent.click(submitButton);
-
-    // // ASSERT: createPost was called with correct arguments
-    // await waitFor(() => {
-    //   expect(createPost).toHaveBeenCalledWith("testToken", "test post");
-    // });
-
-    // // ASSERT: New post appears in the document
-    // expect(screen.getByText("test post")).toBeInTheDocument();
-
 });

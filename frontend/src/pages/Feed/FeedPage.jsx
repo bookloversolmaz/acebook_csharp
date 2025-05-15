@@ -64,7 +64,7 @@ export const FeedPage = () => {
           value={message}
           onChange={handleMessageChange}
         />
-        <input role="submit-button" id="submit" type="submit" value="Submit" />
+        <button type="submit">Submit</button>
       </form>
       <h2>Posts</h2>
       <div className="feed" role="feed">
