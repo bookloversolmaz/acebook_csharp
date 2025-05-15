@@ -112,4 +112,5 @@ jobs:
 
     - name: Upload to bucket
       run: |
+        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
         gsutil -m rsync -r -c frontend/dist gs://liberis-bucket
