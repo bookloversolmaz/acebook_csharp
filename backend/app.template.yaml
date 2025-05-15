@@ -1,0 +1,26 @@
+runtime: custom
+env: flex
+
+# Optional: Automatically scale instances
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_num_instances: 1
+  max_num_instances: 3
+
+# Environment variables passed to your .NET app
+env_variables:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  DATABASE_HOST: "${DATABASE_HOST}"
+  DATABASE_USERNAME: "${DATABASE_USERNAME}"
+  DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+  DATABASE_NAME: "${DATABASE_NAME}"
+  DATABASE_PORT: "5432"
+
+beta_settings:
+  cloud_sql_instances: ${DATABASE_HOST}
+
+# Optional: Skip file uploads like build artifacts
+skip_files:
+  - ^node_modules/.*$
+  - ^frontend/.*$
+  - ^\.git/.*$

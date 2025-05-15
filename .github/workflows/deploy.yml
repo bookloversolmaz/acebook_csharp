@@ -1,0 +1,100 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup:
+    name: Setup GCP Credentials
+    runs-on: ubuntu-latest
+    outputs:
+      PROJECT_ID: ${{ steps.auth.outputs.project_id }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+  deploy-backend:
+    name: Deploy Backend (.NET to App Engine)
+    needs: setup
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_HOST: ${{ secrets.DB_HOST }}
+      DATABASE_USERNAME: ${{ secrets.DB_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DATABASE_NAME: ${{ secrets.DB_NAME }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Authenticate
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    - name: Install envsubst
+      run: sudo apt-get update && sudo apt-get install -y gettext
+
+    - name: Generate app.yaml from template
+      run: envsubst < backend/app.template.yaml > backend/app.yaml
+
+    - name: Install EF CLI
+      run: dotnet tool install --global dotnet-ef
+
+    - name: Run EF Core Migrations
+      env:
+        ASPNETCORE_ENVIRONMENT: Production
+        DATABASE_HOST: ${{ secrets.DB_HOST }}
+        DATABASE_USERNAME: ${{ secrets.DB_USER }}
+        DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DATABASE_NAME: ${{ secrets.DB_NAME }}
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        PATH: ${{ env.PATH }}:/home/runner/.dotnet/tools
+      run: |
+        cd backend/Acebook
+        dotnet ef database update --no-build
+
+    - name: Deploy to App Engine
+      run: gcloud app deploy backend/app.yaml --quiet
+
+  deploy-frontend:
+    name: Deploy Frontend (React to GCS)
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Authenticate
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    - name: Install Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm ci
+        npm run build
+
+    - name: Upload to bucket
+      run: |
+        gsutil -m rsync -r -c frontend/build gs://liberis-bucket
