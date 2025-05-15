@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { signup } from "../../services/authentication";
-import { CheckUsername } from "../../services/authentication";
+import { checkUsername } from "../../services/authentication";
+import { checkEmail } from "../../services/authentication";
 
 export const SignupPage = () => {
   const [username, setUsername] = useState("");
@@ -19,15 +20,16 @@ export const SignupPage = () => {
     );
   };
 
-   const emailValidator = (string) => {
+    const emailValidator = (string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return (
       emailRegex.test(string)
     );
   };
+  
   async function CheckUsernameExists (username){
     try{
-      const response = await CheckUsername(username)
+      const response = await checkUsername(username)
   
       console.log(` Signup page line 32 response is ${response}`)
       //if response is true - username exists so return signup page and alert
@@ -38,37 +40,61 @@ export const SignupPage = () => {
         return true
       }
     }catch(err){
-       console.error(err);
+      console.error(err);
     }
   }
+
+    async function CheckEmailExists(email){
+    try{
+      const response = await checkEmail(email)
+  
+      console.log(` Signup page line 51 check email response is ${response}`)
+      //if response is true - username exists so return signup page and alert
+      if(response == true){
+        return false
+      }else{
+        return true
+      }
+    }catch(err){
+      console.error(err);
+    }
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     
     const usernameExists = await CheckUsernameExists(username);
+    const emailExists = await CheckEmailExists(email);
     // console.log(` Signup page line 48 usernameExists is ${usernameExists}`)
     if (password.length >= 8 && passValidator(password) && emailValidator(email)){
-      if(usernameExists){
-        try {
-            await signup(username, email, password);
-            console.log("redirecting...:");
-            navigate("/login");
-        } catch (err) {
-          console.error(err);
-          navigate("/signup");
+          if(usernameExists){
+                if(emailExists) {
+                  try {
+                    await signup(username, email, password);
+                    console.log("redirecting...:");
+                    navigate("/login");
+                } catch (err) {
+                  console.error(err);
+                  navigate("/signup");
+                  }
+                }
+                else {
+                  alert("Email already exists. Please choose another email.");
+                  navigate("/signup");
+                }
+          } else {
+              alert("Username already exists. Please choose another username.");
+              navigate("/signup");
           }
-    } else {
-      alert("Username already exists. Please choose another username.");
-      navigate("/signup");
-    }
     } else{
-       alert("Your password or email is not valid. Passwords must have one number, one special character and atleast 8 characters long");
-      navigate("/signup");
+        alert("Your password or email is not valid. Passwords must have one number, one special character and atleast 8 characters long");
+        navigate("/signup");
     }
   }
   
 
-  async function handleUsernameChange(event){
-   setUsername(event.target.value)
+  const handleUsernameChange = (event)=> {
+    setUsername(event.target.value)
   };
   const handleEmailChange = (event) => {
     setEmail(event.target.value);

@@ -81,5 +81,17 @@ public class UsersController : ControllerBase
       return Ok(new {exists = UsernameExists});
       }
 
+
+    [Route("api/users/checkemail")]
+    [HttpGet]
+    public IActionResult CheckEmail([FromQuery] string email){
+        AcebookDbContext dbContext = new AcebookDbContext();
+
+        Console.WriteLine("arrived at backend checking email");
+        Console.WriteLine($"line 91: email is {email}");
+        bool EmailExists = dbContext.Users?.Any(u => u.Email == email) ?? false;
+        Console.WriteLine($"Email Exists is {EmailExists}");
+      return Ok(new {exists = EmailExists});
+      }
     }
 

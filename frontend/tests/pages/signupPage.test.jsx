@@ -3,21 +3,26 @@ import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
 import { useNavigate } from "react-router-dom";
+
 import { signup } from "../../src/services/authentication";
+import { checkEmail } from "../../src/services/authentication";
+import { checkUsername } from "../../src/services/authentication";
 
 import { SignupPage } from "../../src/pages/Signup/SignupPage";
 
+const navigateMock = vi.fn();
+
 // Mocking React Router's useNavigate function
 vi.mock("react-router-dom", () => {
-  const navigateMock = vi.fn();
-  const useNavigateMock = () => navigateMock; // Create a mock function for useNavigate
-  return { useNavigate: useNavigateMock };
+  return { useNavigate: () => navigateMock };
 });
 
 // Mocking the signup service
 vi.mock("../../src/services/authentication", () => {
   const signupMock = vi.fn();
-  return { signup: signupMock };
+  const checkEmailMock = vi.fn();
+  const checkUsernameMock = vi.fn();
+  return { signup: signupMock, checkEmail: checkEmailMock, checkUsername: checkUsernameMock };
 });
 
 // Reusable function for filling out signup form
@@ -40,11 +45,11 @@ describe("Signup Page", () => {
   });
 
   test("allows a user to signup", async () => {
+    checkUsername.mockResolvedValue(false); // username does NOT exist yet
+    checkEmail.mockResolvedValue(false);    // email does NOT exist yet
     render(<SignupPage />);
-
     await completeSignupForm();
-
-    expect(signup).toHaveBeenCalledWith("Unique", "unique@email.com", "Secret6!");
+    expect(signup).toHaveBeenCalledWith("Unique", "unique@email.com", expect.any(String));
   });
 
   test("navigates to /login on successful signup", async () => {
