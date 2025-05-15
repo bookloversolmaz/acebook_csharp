@@ -7,13 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { getPosts } from "../../services/posts";
 import { createPost } from "../../services/posts";
 import Post from "../../components/Post/Post";
-
+// Component definition
 export const FeedPage = () => {
   const [posts, setPosts] = useState([]);
 
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
+// useEffect to fetch posts on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -28,22 +28,17 @@ export const FeedPage = () => {
         });
     }
   }, [navigate]);
-
+// Check if token exists
   const token = localStorage.getItem("token");
   if (!token) {
     navigate("/login");
     return;
   }
-
+// Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await createPost(token, message);
-
-      // Add the newly created post to the page
-      // const newPost = {
-      //   message: response.Message
-      // };
 
       setPosts([response.post, ...posts]); // Add new message to existing posts using response data
       setMessage("");
@@ -53,10 +48,11 @@ export const FeedPage = () => {
       navigate("/login");
     }
   };
+  // Handle message input change
   const handleMessageChange = (event) => {
   setMessage(event.target.value);
 };
-// Create a new post form within the feed page
+// Create a new post form within the feed page. Render the component
   return (
     <>
       <h2>Create new post</h2>
