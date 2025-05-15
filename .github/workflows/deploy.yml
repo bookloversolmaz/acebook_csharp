@@ -87,6 +87,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Check credentials file exists
+      run: ls -l $GOOGLE_APPLICATION_CREDENTIALS
+
     - name: Authenticate
       uses: google-github-actions/auth@v2
       with:
