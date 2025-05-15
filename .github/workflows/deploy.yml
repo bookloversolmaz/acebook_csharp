@@ -56,6 +56,14 @@ jobs:
     - name: Install EF CLI
       run: dotnet tool install --global dotnet-ef
 
+    - name: Restore dependencies
+      working-directory: backend/Acebook
+      run: dotnet restore
+
+    - name: Build backend
+      working-directory: backend/Acebook
+      run: dotnet build --no-restore
+
     - name: Run EF Core Migrations
       env:
         ASPNETCORE_ENVIRONMENT: Production
