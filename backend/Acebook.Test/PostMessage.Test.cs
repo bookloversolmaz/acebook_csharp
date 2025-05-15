@@ -24,8 +24,9 @@ namespace Acebook.Tests
       // Arrange
       var userData = new
       {
-        email = "francine@email.com",
-        password = "12345678"
+        username = "Lina",
+        email = "lina@email.com",
+        password = "Secret123!"
       };
 
       // Act
