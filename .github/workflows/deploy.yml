@@ -87,13 +87,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Check credentials file exists
-      run: ls -l $GOOGLE_APPLICATION_CREDENTIALS
-
     - name: Authenticate
+      id: auth
       uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    - name: Set GOOGLE_APPLICATION_CREDENTIALS
+      run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ steps.auth.outputs.credentials_file_path }}" >> $GITHUB_ENV
 
     - name: Install Node
       uses: actions/setup-node@v3
@@ -105,6 +106,9 @@ jobs:
         cd frontend
         npm ci
         npm run build
+
+    - name: Check credentials file exists
+      run: ls -l $GOOGLE_APPLICATION_CREDENTIALS
 
     - name: Upload to bucket
       run: |
