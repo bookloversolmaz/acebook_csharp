@@ -105,4 +105,4 @@ jobs:
 
     - name: Upload to bucket
       run: |
-        gsutil -m rsync -r -c frontend/build gs://liberis-bucket
+        gsutil -m rsync -r -c frontend/dist gs://liberis-bucket
