@@ -22,7 +22,6 @@ public class TokensController : ControllerBase
       AcebookDbContext dbContext = new AcebookDbContext();
       
       User? user = dbContext.Users.FirstOrDefault(user => user.Email == credentials.Email);
-      Console.WriteLine($"user is {user}");
 
       bool isPasswordValid = user != null && BCrypt.Net.BCrypt.Verify(credentials.Password, user.Password);
 
