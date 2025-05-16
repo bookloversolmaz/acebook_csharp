@@ -78,6 +78,46 @@ describe("Feed Page", () => {
       expect(createPost).toHaveBeenCalledWith("testToken", "test post");
     });
   });
-  // 
-  test
+  // fetch post from backend, add a new post using createpost and check that the newest post is at the top of the page
+  test("Displays existing posts and new posts from create post correctly, with the newest post first", async () => {
+      // ARRANGE
+      const user = userEvent.setup(); // Used to mimic user creating an new post and then re-rendering the page
+      // Set token in localStorage
+      window.localStorage.setItem("token", "testToken");
+      // Set up initial posts from backend
+      const initialPosts = [{ _id: "1", message: "Old Post" }];
+      getPosts.mockResolvedValue({ posts: initialPosts, token: "testToken" });
+      // First render - should show initial post
+      render(<FeedPage />);
+      await screen.findByText("Old Post");
+      // Mock createPost response (newer post)
+      createPost.mockResolvedValue({post: { _id: "2", message: "New Post" },});
+      // ACT: Simulate creating a new post
+      await user.type(screen.getByLabelText(/message/i), "New Post");
+      await user.click(screen.getByRole("button", { name: /submit/i }));
+      // ASSERT: After submission, both posts should be in the feed
+      const postsAfterCreate = await screen.findAllByRole("article");
+      expect(postsAfterCreate).toHaveLength(2);
+      expect(postsAfterCreate[0].textContent).toContain("New Post");
+      expect(postsAfterCreate[1].textContent).toContain("Old Post");
+  });
+  // re-render the component. check that the newest post is at the top of the list.
+  test("Does the page list the posts in order from newest to oldest after re-rendering", async () =>{
+      // Re-mock the getPosts response to return both posts (newest first)
+      getPosts.mockResolvedValue({
+        posts: [
+          { _id: "2", message: "New Post" }, // newer post first
+          { _id: "1", message: "Old Post" },
+        ],
+        token: "testToken",
+      });
+
+      // Re-render FeedPage (like a page refresh)
+      // ASSERT
+      render(<FeedPage />);
+      const postsAfterRefresh = await screen.findAllByRole("article");
+      expect(postsAfterCreate[0].textContent).toContain("New Post");
+      expect(postsAfterCreate[1].textContent).toContain("Old Post");
+  });
+
 });
