@@ -2,8 +2,10 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using BCrypt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using acebook.Models;
-
+using acebook.Services;
 namespace acebook.Controllers;
 
 [ApiController]
@@ -82,5 +84,38 @@ public class UsersController : ControllerBase
         bool EmailExists = dbContext.Users?.Any(u => u.Email == email) ?? false;
       return Ok(new {exists = EmailExists});
       }
+
+    [Route("api/users/getuserbyid")]
+    [HttpGet]
+    public IActionResult GetUserById([FromQuery] int id){
+        Console.WriteLine("UsersController id is line 91 =====");
+        Console.WriteLine(id);
+        AcebookDbContext dbContext = new AcebookDbContext();
+        User userForDto = dbContext.Users?.FirstOrDefault(u => u._Id == id);
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return BadRequest("User ID not found in token");
+        }
+
+        var userId = int.Parse(userIdClaim.Value);
+        var user = dbContext.Users.Find(userId);
+        var newToken = TokenService.GenerateToken(user);
+
+        var userDtoToReturn = new UserDto
+        {
+            // Get method, takes info from the database.
+            _Id = userForDto._Id,
+            Username = userForDto.Username,
+            // ProfileImage = userForDto.ProfileImage,
+            Posts = userForDto.Posts
+        };
+
+
+      return Ok(new {user = userDtoToReturn, token = newToken});
+      }
+    
+
     }
 

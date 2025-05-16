@@ -60,58 +60,5 @@ namespace Acebook.Tests
       // Assert
       response.Should().BeSuccessful();
     }
-
-//     [Test]
-//     public async Task CreateToken_ValidCredentials_Succeeds()
-//     {
-//       // Arrange
-//       var credentials = new
-//       {
-//         email = "francine@email.com",
-//         password = "12345678"
-//       };
-
-//       // Act
-//       var response = await _client.PostAsJsonAsync("/api/tokens", credentials);
-
-//       // Assert
-//       response.Should().BeSuccessful();
-//     }
-
-//     [Test]
-//     public async Task CreateToken_InvalidEmail_Fails()
-//     {
-//       // Arrange
-//       var credentials = new
-//       {
-//         email = "not_a_user@email.com",
-//         password = "12345678"
-//       };
-
-//       // Act
-//       var response = await _client.PostAsJsonAsync("/api/tokens", credentials);
-
-//       // Assert
-//       response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-//     }
-
-//     [Test]
-//     public async Task CreateToken_InvalidPassword_Fails()
-//     {
-//       // Arrange
-//       var credentials = new
-//       {
-//         email = "francine@email.com",
-//         password = "incorrectpassword"
-//       };
-
-//       // Act
-//       var response = await _client.PostAsJsonAsync("/api/tokens", credentials);
-
-//       // Assert
-//       response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-//     }
-//   }
-// }
 }
 }
