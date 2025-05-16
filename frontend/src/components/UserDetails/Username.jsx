@@ -1,8 +1,8 @@
 const Username = (props) => {
-    console.log("Username Component props.Username ==v")
-    console.log(props.Username)
-    if (!props.Username) return null;
-    return <h3>{props.Username}</h3>;
+    console.log("Username Component props.username ==v")
+    console.log(props.username)
+    if (!props.username) return null;
+    return <h3>{props.username}</h3>;
     
 };
 

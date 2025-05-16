@@ -27,7 +27,7 @@ describe("Profile Page", () => {
     test("It displays username from the backend", async () => {
         window.localStorage.setItem("token", "testToken");
     
-        const mockUser = { _Id: "12345", Username: "user14" };
+        const mockUser = { _id: "12345", username: "user14" };
     
         getUserById.mockResolvedValue({ user: mockUser, token: "newToken" });
     

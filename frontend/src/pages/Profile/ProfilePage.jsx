@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../services/users";
 import Username from "../../components/UserDetails/Username";
 
+// import jwtDecode from "jwt-decode";
+
+
 export const ProfilePage = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
@@ -10,18 +13,29 @@ export const ProfilePage = () => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            getUserById(token)
-                .then((data) => {
+            try {
+                // const decoded = jwtDecode(token);
+                // const userId = decoded.nameid;
+
+                // THIS IS WRONG. NEEDS FIXING ==v
+                const userId = 2;
                 
-                console.log("ProfilePage.jsx data.user ==v");
-                console.log(data.user);
-                setUser(data.user);
-                localStorage.setItem("token", data.token);
-                })
-                .catch((err) => {
-                console.error(err);
+                getUserById(token, userId)
+                    .then((data) => {
+                    
+                    console.log("ProfilePage.jsx data.user ==v");
+                    console.log(data.user);
+                    setUser(data.user);
+                    localStorage.setItem("token", data.token);
+                    })
+                    .catch((err) => {
+                    console.error(err);
+                    navigate("/login");
+                    });
+            } catch (err) {
+                console.error("Invalid token", err);
                 navigate("/login");
-                });
+            }
             } else {
                 navigate("/login");
             }
@@ -29,7 +43,7 @@ export const ProfilePage = () => {
     
     return (
         <>
-        {user && <Username Username={user.Username} key={user._id}/>}
+        {user && <Username username={user.username} key={user._id}/>}
         </>
     )
 }

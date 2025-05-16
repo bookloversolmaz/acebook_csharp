@@ -88,8 +88,6 @@ public class UsersController : ControllerBase
     [Route("api/users/getuserbyid")]
     [HttpGet]
     public IActionResult GetUserById([FromQuery] int id){
-        Console.WriteLine("UsersController id is line 91 =====");
-        Console.WriteLine(id);
         AcebookDbContext dbContext = new AcebookDbContext();
         User userForDto = dbContext.Users?.FirstOrDefault(u => u._Id == id);
 
@@ -102,17 +100,15 @@ public class UsersController : ControllerBase
         var userId = int.Parse(userIdClaim.Value);
         var user = dbContext.Users.Find(userId);
         var newToken = TokenService.GenerateToken(user);
-
         var userDtoToReturn = new UserDto
         {
-            // Get method, takes info from the database.
             _Id = userForDto._Id,
             Username = userForDto.Username,
             // ProfileImage = userForDto.ProfileImage,
             Posts = userForDto.Posts
         };
 
-
+        Console.WriteLine($"userDtoToReturn {userDtoToReturn.Username}");
       return Ok(new {user = userDtoToReturn, token = newToken});
       }
     
