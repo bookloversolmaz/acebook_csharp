@@ -13,8 +13,8 @@ vi.mock("../../src/services/posts", () => {
   const getPostsMock = vi.fn(); // vi.fn() is a method for creating a mock function to track calls and define return values
   const createPostMock = vi.fn(); 
   return { getPosts: getPostsMock, createPost: createPostMock };
-});
 
+});
 // Mocking React Router's useNavigate function to track navigation actions during the test
 // navigate mock replaces original useNavigate
 vi.mock("react-router-dom", () => { 
@@ -33,18 +33,14 @@ describe("Feed Page", () => {
   // This test checks whether the posts fetched from the backend are displayed correctly in the FeedPage.
   test("It displays posts from the backend", async () => {
     window.localStorage.setItem("token", "testToken"); // Set a test token in local storage to simulate user
-
     const mockPosts = [{ _id: "12345", message: "Test Post 1" }]; // Creates a mock post
-
     getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" }); // Mock API response
-
     render(<FeedPage />); // Render feedpage
-
     const post = await screen.findByRole("article"); // wait for the post to be rendered
     expect(post.textContent).toEqual("Test Post 1"); // Assert that the post displays correctly
   });
 
-  //  Second test, navigating the login, if no token is present redirect to login page
+  //  Navigating the login, if no token is present redirect to login page
   test("It navigates to login if no token is present", async () => {
     render(<FeedPage />); // rendered without setting a token, simulating an unauthenticated user.
     // The test then checks if the navigateMock function was called with the /login route, confirming that the redirection logic works correctly.
@@ -52,40 +48,36 @@ describe("Feed Page", () => {
     expect(navigateMock).toHaveBeenCalledWith("/login");
   });
 
-  // check that user can post and display posts
+  // Check that user can post and display posts
   test("Can add a new post to the feed page", async () => {
-    // Arrange
+    // ARRANGE
     // Use userEvent rather than fireevent, which simulates full interactions rather than dispatching dom events
-      // userEvent simulates real user interactions, such as typing, clicking etc
+    // userEvent simulates real user interactions, such as typing, clicking etc
     const user = userEvent.setup() // must invoke userEvent before component is rendered
     // simulate user login with the test token first
     window.localStorage.setItem("token", "testToken");
-    createPost.mockResolvedValue({post: // tells createpost from vi.mock ti resolve with the given post when its called
+    // tells createpost from vi.mock to resolve with the given post when its called
     // When `FeedPage` is rendered, it will eventually call `createPost` after the form is submitted.
     // You must define how the mock should behave *before* it's called — otherwise, the mock might return `undefined`, reject unexpectedly, or just not behave as expected.
     // Think of this as setting up the backend’s behaviour before the app interacts with it.
-    {
-      _id: "1",
-      Message: "test post",
-    },
-    });
-
-      // Then renders page 
+    const mockPosts = [{ _id: "123456", message: "Test Post 2" }]; 
+    getPosts.mockResolvedValue({ posts: mockPosts, token: "testToken" }); 
+    createPost.mockResolvedValue({post: {_id: "1", Message: "test post", }, });
+    // Then renders page 
     render(<FeedPage />);
-
-    // Act
+    // ACT
     // Simulate user typing in the input and submitting the form
     // Selects the text input by its label "Message:"
     const input = screen.getByLabelText(/message/i);
     await user.type(input, "test post");
-
     const submitButton = screen.getByRole("button", { name: /submit/i });
     await user.click(submitButton);
-
-    // Assert
+    // ASSERT
     // createPost was called with correct arguments (token and message)
     await waitFor(() => {
       expect(createPost).toHaveBeenCalledWith("testToken", "test post");
     });
   });
+  // 
+  test
 });
