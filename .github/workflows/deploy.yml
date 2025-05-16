@@ -47,6 +47,9 @@ jobs:
       with:
         credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
+    - name: Set GOOGLE_APPLICATION_CREDENTIALS
+      run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ steps.auth.outputs.credentials_file_path }}" >> $GITHUB_ENV
+
     - name: Install envsubst
       run: sudo apt-get update && sudo apt-get install -y gettext
 
@@ -77,8 +80,13 @@ jobs:
         cd backend/Acebook
         dotnet ef database update --no-build
 
+    - name: Check credentials file exists
+      run: ls -l $GOOGLE_APPLICATION_CREDENTIALS
+
     - name: Deploy to App Engine
-      run: gcloud app deploy backend/app.yaml --quiet
+      run:  |
+        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+        gcloud app deploy backend/app.yaml --quiet
 
   deploy-frontend:
     name: Deploy Frontend (React to GCS)
