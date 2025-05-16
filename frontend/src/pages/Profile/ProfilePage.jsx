@@ -1,33 +1,35 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser } from "../../services/profile";
+import { getUserById } from "../../services/users";
 import Username from "../../components/UserDetails/Username";
 
 export const ProfilePage = () => {
-    // const [posts, setPosts] = useState([]);
-    // const [message, setMessage] = useState("");
-    const [user, setUser] = useState("");
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            getUser(token)
+            getUserById(token)
                 .then((data) => {
-                console.log(data.user.Username)
-                setUser(data.user.Username);
+                
+                console.log("ProfilePage.jsx data.user ==v");
+                console.log(data.user);
+                setUser(data.user);
                 localStorage.setItem("token", data.token);
                 })
                 .catch((err) => {
                 console.error(err);
                 navigate("/login");
                 });
+            } else {
+                navigate("/login");
             }
         }, [navigate]);
     
     return (
         <>
-        <Username Username={user.Username} key={user._id}/>
+        {user && <Username Username={user.Username} key={user._id}/>}
         </>
     )
 }

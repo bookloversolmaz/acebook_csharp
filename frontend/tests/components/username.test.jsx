@@ -9,7 +9,7 @@ describe("Username", () => {
             Username: "testuser1", 
             Email: "testuser1@example.com", 
             Password: "Secret123!" };
-        render(<Username user={testUser} />);
+        render(<Username Username={testUser.Username} />);
 
         const heading = screen.getByRole("heading", { level: 3 });
         expect(heading.textContent).toBe("testuser1");
