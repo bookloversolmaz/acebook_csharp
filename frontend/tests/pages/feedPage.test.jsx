@@ -1,4 +1,4 @@
-import { render, screen, waitFor} from "@testing-library/react";
+import { render, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
@@ -81,18 +81,18 @@ describe("Feed Page", () => {
   // fetch post from backend, add a new post using createpost and check that the newest post is at the top of the page
   test("Displays existing posts and new posts from create post correctly, with the newest post first", async () => {
       // ARRANGE
-      const user = userEvent.setup(); // Used to mimic user creating an new post and then re-rendering the page
+      const user = userEvent.setup(); // Used to mimic user creating a new post and then re-rendering the page
       // Set token in localStorage
       window.localStorage.setItem("token", "testToken");
       // Set up initial posts from backend
       const initialPosts = [{ _id: "1", message: "Old Post" }];
       getPosts.mockResolvedValue({ posts: initialPosts, token: "testToken" });
+      // ACT: Simulate creating a new post
       // First render - should show initial post
       render(<FeedPage />);
       await screen.findByText("Old Post");
       // Mock createPost response (newer post)
       createPost.mockResolvedValue({post: { _id: "2", message: "New Post" },});
-      // ACT: Simulate creating a new post
       await user.type(screen.getByLabelText(/message/i), "New Post");
       await user.click(screen.getByRole("button", { name: /submit/i }));
       // ASSERT: After submission, both posts should be in the feed
@@ -103,21 +103,27 @@ describe("Feed Page", () => {
   });
   // re-render the component. check that the newest post is at the top of the list.
   test("Does the page list the posts in order from newest to oldest after re-rendering", async () =>{
-      // Re-mock the getPosts response to return both posts (newest first)
+      // ARRANGE
+      const user = userEvent.setup(); 
+      window.localStorage.setItem("token", "testToken");
       getPosts.mockResolvedValue({
-        posts: [
-          { _id: "2", message: "New Post" }, // newer post first
-          { _id: "1", message: "Old Post" },
-        ],
-        token: "testToken",
-      });
+        posts: [ 
+        { _id: "2", message: "New Post" }, // newer post first
+        { _id: "1", message: "Old Post" },
+        ], });
 
-      // Re-render FeedPage (like a page refresh)
-      // ASSERT
+      // ACT
       render(<FeedPage />);
-      const postsAfterRefresh = await screen.findAllByRole("article");
-      expect(postsAfterCreate[0].textContent).toContain("New Post");
-      expect(postsAfterCreate[1].textContent).toContain("Old Post");
-  });
+      // Wait for feed to be present
+      const feed = await screen.findByRole("feed");
+
+      // Get all posts (articles) inside the feed. The role is article, which is ARIA role for scrollable container of dynamic content
+      const articles = within(feed).getAllByRole("article");
+
+      // ASSERT
+      expect(articles).toHaveLength(2);
+      expect(articles[0].textContent).toContain("New Post");
+      expect(articles[1].textContent).toContain("Old Post");
+      });
 
 });
