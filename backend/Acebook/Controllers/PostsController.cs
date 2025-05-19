@@ -23,7 +23,11 @@ public class PostsController : ControllerBase
     public IActionResult Index() // Displays the post
     {
         AcebookDbContext dbContext = new AcebookDbContext();
-        List<Post> posts = dbContext.Posts.ToList();
+        // List<Post> posts = dbContext.Posts.ToList();
+        // order list from newest to oldest, replacing statement above
+        List<Post> posts = dbContext.Posts
+        .OrderByDescending(p => p.CreatedAt)
+        .ToList();
         // Get the current user's ID from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)
