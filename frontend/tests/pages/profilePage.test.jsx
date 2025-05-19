@@ -43,15 +43,7 @@ describe("Profile Page", () => {
         render(<ProfilePage />);
         screen.debug(); 
 
-        // await waitFor(() =>{
-        // const username = await screen.getByText(mockUser.username);
-        // expect(username.textContent).toBe("admin"); 
-        // expect(screen.getByText(mockUser.username)).toBeInTheDocument;
-        // console.log(`username is ${mockUser.username}`)
-        // const usernameElement = await screen.findByText(mockUser.username);
-        
-        // expect(usernameElement).toBeInTheDocument();
-        // // })
+
         const usernameElement = await screen.findByRole("heading", {level: 3});
         expect(usernameElement.textContent).toBe("admin");
 

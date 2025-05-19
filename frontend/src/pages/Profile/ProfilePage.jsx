@@ -57,8 +57,6 @@ export const ProfilePage = () => {
                 console.log(decoded)
                 const userId = decoded.nameid;
 
-                // THIS IS WRONG. NEEDS FIXING ==v
-                // const userId = 2;
                 
                 getUserById(token, userId)
                     .then((data) => {
