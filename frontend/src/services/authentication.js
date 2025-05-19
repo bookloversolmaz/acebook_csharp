@@ -67,11 +67,9 @@ export const checkUsername = async (username) => {
   };
 
   let response = await fetch(url, requestOptions);
-    console.log(`services/auth file line 70: response is ${response}`)
 
   if (response.status === 200) {
     const data = await response.json();
-    console.log(`services/auth file line 74: data is ${data}`)
     return data.exists; // assuming the response is { exists: true/false }
   } else {
     throw new Error(
@@ -92,11 +90,10 @@ export const checkEmail = async (email) => {
   };
 
   let response = await fetch(url, requestOptions);
-    console.log(`services/auth file line 95: email check response is ${response}`)
+
 
   if (response.status === 200) {
     const data = await response.json();
-    console.log(`services/auth file line 100: email check data is ${data}`)
     return data.exists; // assuming the response is { exists: true/false }
   } else {
     throw new Error(
