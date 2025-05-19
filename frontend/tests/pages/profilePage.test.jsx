@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import { ProfilePage } from "../../src/pages/Profile/ProfilePage";
@@ -21,9 +21,9 @@ vi.mock("react-router-dom", async () => {
 });
 
 const generateTestToken = (payload = { userId: '123', role: 'admin' }) => {
-  const secret = 'test-secret';
-  const token = jwt.sign(payload, secret, { expiresIn: '1h' });
-  return token;
+    const secret = 'test-secret';
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    return token;
 };
 
 describe("Profile Page", () => {
@@ -42,16 +42,6 @@ describe("Profile Page", () => {
     
         render(<ProfilePage />);
         screen.debug(); 
-
-        // await waitFor(() =>{
-        // const username = await screen.getByText(mockUser.username);
-        // expect(username.textContent).toBe("admin"); 
-        // expect(screen.getByText(mockUser.username)).toBeInTheDocument;
-        // console.log(`username is ${mockUser.username}`)
-        // const usernameElement = await screen.findByText(mockUser.username);
-        
-        // expect(usernameElement).toBeInTheDocument();
-        // // })
         const usernameElement = await screen.findByRole("heading", {level: 3});
         expect(usernameElement.textContent).toBe("admin");
 

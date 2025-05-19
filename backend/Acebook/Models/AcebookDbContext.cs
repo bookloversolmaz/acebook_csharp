@@ -17,7 +17,7 @@ public class AcebookDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Post>()
-          .Navigation(post => post.User)
-          .AutoInclude();
+            .Navigation(post => post.User)
+            .AutoInclude();
     }
 }
