@@ -5,32 +5,14 @@ public class AcebookDbContext : DbContext
 {
     public DbSet<Post>? Posts { get; set; }
     public DbSet<User>? Users { get; set; }
+    public string? DbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
 
-    public string? DbPath { get; }
-
-    public string? DatabaseUsernameArg = Environment.GetEnvironmentVariable("DATABASE_USERNAME");
-
-    public string? GetDatabaseName() {
-      string? DatabaseNameArg = Environment.GetEnvironmentVariable("DATABASE_NAME");
-
-      if( DatabaseNameArg == null)
-      {
-        System.Console.WriteLine(
-          "DATABASE_NAME is null. Defaulting to test database."
-        );
-        return "acebook_csharp_test";
-      }
-      else
-      {
-        System.Console.WriteLine(
-          "Connecting to " + DatabaseNameArg
-        );
-        return DatabaseNameArg;
-      }
-    }
+    public string? DbUsername = Environment.GetEnvironmentVariable("DATABASE_USERNAME") ?? "postgres";
+    public string? DbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "1234";
+    public string? DbName = Environment.GetEnvironmentVariable("DATABASE_NAME") ?? "acebook_csharp_test";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(@$"Host=localhost;Username={DatabaseUsernameArg};Password=1234;Database=" + GetDatabaseName());
+    => optionsBuilder.UseNpgsql($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

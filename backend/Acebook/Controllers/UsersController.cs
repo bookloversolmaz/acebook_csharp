@@ -18,21 +18,16 @@ public class UsersController : ControllerBase
         _logger = logger;
     }
 
-  
-
     //SIGN-UP ROUTE
     [Route("api/users")]
     [HttpPost]
     public IActionResult Create([FromBody] User user) {
       try{
       AcebookDbContext dbContext = new AcebookDbContext();
-      
       bool EmailExists = dbContext.Users?.Any(u => u.Email == user.Email) ?? false;
       bool UsernameExists = dbContext.Users?.Any(u => u.Username == user.Username) ?? false;
-
       Regex validatePasswordRegex = new Regex("^(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$");
       //regex = Must have one number, one special character and 8 characters long.
-
       Regex validateEmailRegex = new Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
 
       if(EmailExists || UsernameExists){
