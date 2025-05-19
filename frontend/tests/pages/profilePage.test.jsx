@@ -4,6 +4,7 @@ import { vi } from "vitest";
 import { ProfilePage } from "../../src/pages/Profile/ProfilePage";
 import { getUserById } from "../../src/services/users";
 // import { useNavigate } from "react-router-dom";
+import jwt from 'jsonwebtoken';
 
 // Mocking the getUserById service
 vi.mock("../../src/services/users", () => {
@@ -19,24 +20,40 @@ vi.mock("react-router-dom", async () => {
     return { useNavigate: useNavigateMock };
 });
 
+const generateTestToken = (payload = { userId: '123', role: 'admin' }) => {
+  const secret = 'test-secret';
+  const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+  return token;
+};
+
 describe("Profile Page", () => {
     beforeEach(() => {
         window.localStorage.removeItem("token");
     });
 
     test("It displays username from the backend", async () => {
-        window.localStorage.setItem("token", "testToken");
+        const token = generateTestToken();
+        
+        window.localStorage.setItem("token", token);
     
-        const mockUser = { _id: "12345", username: "user14" };
+        const mockUser = { _id: "123", username: "admin" };
     
-        getUserById.mockResolvedValue({ user: mockUser, token: "newToken" });
+        getUserById.mockResolvedValue({ user: mockUser, token: token });
     
         render(<ProfilePage />);
+        screen.debug(); 
+
+        // await waitFor(() =>{
+        // const username = await screen.getByText(mockUser.username);
+        // expect(username.textContent).toBe("admin"); 
+        // expect(screen.getByText(mockUser.username)).toBeInTheDocument;
+        // console.log(`username is ${mockUser.username}`)
+        // const usernameElement = await screen.findByText(mockUser.username);
         
-        await waitFor(() =>{
-        const username = screen.getByRole("heading", { level: 3 });
-        expect(username.textContent).toBe("user14"); 
-        })
+        // expect(usernameElement).toBeInTheDocument();
+        // // })
+        const usernameElement = await screen.findByRole("heading", {level: 3});
+        expect(usernameElement.textContent).toBe("admin");
 
     });
 
