@@ -50,6 +50,8 @@ export const ProfilePage = () => {
         // }, [navigate]);
                 if (token) {    
                 try {
+                console.log("This is the token ===v")
+                console.log(token)
                 const decoded = jwtDecode(token);
                 // console.log("This is the decoded value ===v")
                 console.log(decoded)
