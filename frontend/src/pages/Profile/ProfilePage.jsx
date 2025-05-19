@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../services/users";
 import Username from "../../components/UserDetails/Username";
-
+import ProfilePicture from "../../components/UserDetails/ProfilePicture";
 import { jwtDecode } from "jwt-decode";
 
 
@@ -12,6 +12,7 @@ export const ProfilePage = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        // Alternative way:
         // if (!token) {
         //     navigate("/login");
         //     return;
@@ -28,9 +29,7 @@ export const ProfilePage = () => {
         //             navigate("/login");
         //             return;
         //         }
-        //         // THIS IS WRONG. NEEDS FIXING ==v
-        //         // const userId = 2;
-                
+            
         //         getUserById(token, userId)
         //             .then((data) => {
                     
@@ -55,9 +54,7 @@ export const ProfilePage = () => {
                 const decoded = jwtDecode(token);
                 // console.log("This is the decoded value ===v")
                 console.log(decoded)
-                const userId = decoded.nameid;
-
-                
+                const userId = decoded.nameid; 
                 getUserById(token, userId)
                     .then((data) => {
                     
@@ -82,6 +79,7 @@ export const ProfilePage = () => {
     return (
         <>
         {user && <Username username={user.username} key={user._id}/>}
+        {user && <ProfilePicture profilepicture={user.profilepicture} key={user._id}/>}
         </>
     )
 }

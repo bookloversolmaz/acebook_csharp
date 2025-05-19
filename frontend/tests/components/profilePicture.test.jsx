@@ -15,7 +15,7 @@ describe("ProfilePicture", () => {
         const displayedImage = document.querySelector("img")
         expect(displayedImage).toBeInstanceOf(HTMLImageElement);
 
-        // const image = screen.getByRole("img");
-        // expect(image.src).toBe("/Users/avnitabhandal/Desktop/Tutorials/acebook_csharp/frontend/src/assets/Profile_Image_Default.png");
+        const image = screen.getByRole("img");
+        expect(image.src).toBe("http://localhost:3000/assets/Profile_Image_Default.png");
     });
 });
