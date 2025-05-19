@@ -99,11 +99,11 @@ public class UsersController : ControllerBase
         {
             _Id = userForDto._Id,
             Username = userForDto.Username,
-            // ProfileImage = userForDto.ProfileImage,
+            // ProfilePicture = userForDto.ProfilePicture,
             Posts = userForDto.Posts
         };
 
-        Console.WriteLine($"userDtoToReturn {userDtoToReturn.Username}");
+        // Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
       return Ok(new {user = userDtoToReturn, token = newToken});
       }
     
