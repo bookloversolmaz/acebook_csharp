@@ -2,8 +2,10 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using BCrypt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using acebook.Models;
-
+using acebook.Services;
 namespace acebook.Controllers;
 
 [ApiController]
@@ -25,11 +27,9 @@ public class UsersController : ControllerBase
       bool EmailExists = dbContext.Users?.Any(u => u.Email == user.Email) ?? false;
       bool UsernameExists = dbContext.Users?.Any(u => u.Username == user.Username) ?? false;
       Regex validatePasswordRegex = new Regex("^(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$");
-      //Console.WriteLine($"{user.Password} is {validatePasswordRegex.IsMatch(user.Password)}");  // prints True
       //regex = Must have one number, one special character and 8 characters long.
       Regex validateEmailRegex = new Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
-      //Console.WriteLine($"{user.Email} is {validateEmailRegex.IsMatch(user.Email)}");  // prints True     
-      // Console.WriteLine($"username is {user.Username} ");
+
       if(EmailExists || UsernameExists){
         Console.WriteLine($"Email or username already in db");
         return BadRequest(); 
@@ -67,11 +67,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     public IActionResult CheckUsername([FromQuery] string username){
         AcebookDbContext dbContext = new AcebookDbContext();
-
-        Console.WriteLine("arrived at backend");
-        Console.WriteLine($"line 78: username is {username}");
         bool UsernameExists = dbContext.Users?.Any(u => u.Username == username) ?? false;
-        Console.WriteLine($"UsernameExists is {UsernameExists}");
       return Ok(new {exists = UsernameExists});
       }
 
@@ -80,12 +76,37 @@ public class UsersController : ControllerBase
     [HttpGet]
     public IActionResult CheckEmail([FromQuery] string email){
         AcebookDbContext dbContext = new AcebookDbContext();
-
-        Console.WriteLine("arrived at backend checking email");
-        Console.WriteLine($"line 91: email is {email}");
         bool EmailExists = dbContext.Users?.Any(u => u.Email == email) ?? false;
-        Console.WriteLine($"Email Exists is {EmailExists}");
       return Ok(new {exists = EmailExists});
       }
+
+    [Route("api/users/getuserbyid")]
+    [HttpGet]
+    public IActionResult GetUserById([FromQuery] int id){
+        AcebookDbContext dbContext = new AcebookDbContext();
+        User userForDto = dbContext.Users?.FirstOrDefault(u => u._Id == id);
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return BadRequest("User ID not found in token");
+        }
+
+        var userId = int.Parse(userIdClaim.Value);
+        var user = dbContext.Users.Find(userId);
+        var newToken = TokenService.GenerateToken(user);
+        var userDtoToReturn = new UserDto
+        {
+            _Id = userForDto._Id,
+            Username = userForDto.Username,
+            // ProfileImage = userForDto.ProfileImage,
+            Posts = userForDto.Posts
+        };
+
+        Console.WriteLine($"userDtoToReturn {userDtoToReturn.Username}");
+      return Ok(new {user = userDtoToReturn, token = newToken});
+      }
+    
+
     }
 

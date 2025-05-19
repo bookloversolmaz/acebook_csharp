@@ -30,11 +30,8 @@ export const SignupPage = () => {
   async function CheckUsernameExists (username){
     try{
       const response = await checkUsername(username)
-  
-      console.log(` Signup page line 32 response is ${response}`)
       //if response is true - username exists so return signup page and alert
       if(response == true){
-
         return false
       }else{
         return true
@@ -47,8 +44,6 @@ export const SignupPage = () => {
     async function CheckEmailExists(email){
     try{
       const response = await checkEmail(email)
-  
-      console.log(` Signup page line 51 check email response is ${response}`)
       //if response is true - username exists so return signup page and alert
       if(response == true){
         return false
@@ -65,7 +60,6 @@ export const SignupPage = () => {
     
     const usernameExists = await CheckUsernameExists(username);
     const emailExists = await CheckEmailExists(email);
-    // console.log(` Signup page line 48 usernameExists is ${usernameExists}`)
     if (password.length >= 8 && passValidator(password) && emailValidator(email)){
           if(usernameExists){
                 if(emailExists) {

@@ -40,11 +40,6 @@ export const FeedPage = () => {
     try {
       const response = await createPost(token, message);
 
-      // Add the newly created post to the page
-      // const newPost = {
-      //   message: response.Message
-      // };
-
       setPosts([response.post, ...posts]); // Add new message to existing posts using response data
       setMessage("");
       navigate("/posts");
