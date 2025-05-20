@@ -30,17 +30,15 @@ const Post = (props) => {
   }, [props.post.userId, props.token]);
 
   return (
-    <article key={props.post._id}>
-      <header> 
-          <h3 data-testid="post-username">
-            {username}
-          </h3>
-      </header>
-      <div data-testid="post-createdAt">
-        {formattedDate}
-      </div>
-      <div data-testid="post-message">
-        {props.post.message}
+    <article className="card mb-3 shadow-sm border-primary bg-light" key={props.post._id}>
+      <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+              <h5 className="card-title mb-0 fw-bold" data-testid="post-username">{username}</h5>              
+                  <p data-testid="post-createdAt" className="mb-0 text-muted small">{formattedDate}</p>
+          </div>
+          <div data-testid="post-message">
+              <p className="card-text mt-4 mb-0 text-start">{props.post.message}</p>
+          </div>
       </div>
     </article>);
   // Include datetime in component
