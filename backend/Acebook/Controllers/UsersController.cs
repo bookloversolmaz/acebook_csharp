@@ -2,8 +2,10 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using BCrypt;
+using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
 using acebook.Models;
 using acebook.Services;
 namespace acebook.Controllers;
@@ -18,8 +20,10 @@ public class UsersController : ControllerBase
         _logger = logger;
     }
 
+    
+
     //SIGN-UP ROUTE
-    [Route("api/users")]
+  [Route("api/users")]
     [HttpPost]
     public IActionResult Create([FromBody] User user) {
       try{
@@ -47,12 +51,19 @@ public class UsersController : ControllerBase
         return BadRequest(); 
       }
       else{  
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-
-        dbContext.Users.Add(user);
-        dbContext.SaveChanges();
-        string location = "api/users/" + user._Id;
-        return Created();
+          user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+          if (user.ProfilePicture == null || user.ProfilePicture.Length == 0) {
+                var defaultImagePath = Path.Combine(AppContext.BaseDirectory, "Uploads", "Profile_Image_Default.png");
+                if (System.IO.File.Exists(defaultImagePath)) {
+                    user.ProfilePicture = System.IO.File.ReadAllBytes(defaultImagePath);
+                } else {
+                    Console.WriteLine("⚠️ Default profile image not found.");
+                }
+            }   
+          dbContext.Users.Add(user);
+          dbContext.SaveChanges();
+          string location = "api/users/" + user._Id;
+          return Created();
       }
       }
       catch (Exception e)
@@ -95,15 +106,17 @@ public class UsersController : ControllerBase
         var userId = int.Parse(userIdClaim.Value);
         var user = dbContext.Users.Find(userId);
         var newToken = TokenService.GenerateToken(user);
+        // Console.WriteLine($"useddto {UserDto}");
         var userDtoToReturn = new UserDto
         {
             _Id = userForDto._Id,
             Username = userForDto.Username,
-            // ProfilePicture = userForDto.ProfilePicture,
+            
+            ProfilePicture = userForDto.ProfilePicture,
             Posts = userForDto.Posts
         };
-
-        // Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
+        
+        Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
       return Ok(new {user = userDtoToReturn, token = newToken});
       }
     
