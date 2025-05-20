@@ -52,6 +52,7 @@ export const FeedPage = () => {
   const handleMessageChange = (event) => {
   setMessage(event.target.value);
 };
+
 // Create a new post form within the feed page. Render the component
   return (
     <>
@@ -69,7 +70,7 @@ export const FeedPage = () => {
       <h2>Posts</h2>
       <div className="feed" role="feed">
         {posts.map((post) => (
-          <Post post={post} key={post._id} />
+          <Post post={post} key={post._id} token={token} />
         ))}
       </div>
     </>

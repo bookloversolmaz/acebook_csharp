@@ -12,60 +12,22 @@ export const ProfilePage = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        // Alternative way:
-        // if (!token) {
-        //     navigate("/login");
-        //     return;
-        // }
-        //     try {
-        //         const decoded = jwtDecode(token);
-        //         console.log("This is the decoded value ===v")
-        //         console.log(decoded)
-        //         const userId = decoded.nameid || decoded.sub || decoded.userId;
-                
 
-        //         if (!userId) {
-        //             console.error("User ID not found in token");
-        //             navigate("/login");
-        //             return;
-        //         }
-            
-        //         getUserById(token, userId)
-        //             .then((data) => {
-                    
-        //             console.log("ProfilePage.jsx data.user ==v");
-        //             console.log(data.user);
-        //             setUser(data.user);
-        //             localStorage.setItem("token", data.token);
-        //             })
-        //             .catch((err) => {
-        //             console.error("Error fetching users", err);
-        //             navigate("/login");
-        //             });
-        //     } catch (err) {
-        //         console.error("Invalid token", err);
-        //         navigate("/login");
-        //     }
-        // }, [navigate]);
+ 
+
                 if (token) {    
                 try {
-                console.log("This is the token ===v")
-                console.log(token)
                 const decoded = jwtDecode(token);
-                // console.log("This is the decoded value ===v")
-                console.log(decoded)
-                const userId = decoded.nameid; 
+                const userId = decoded.nameid;
+                
                 getUserById(token, userId)
                     .then((data) => {
-                    
-                    console.log("ProfilePage.jsx data.user ==v");
-                    console.log(data.user);
-                    setUser(data.user);
-                    localStorage.setItem("token", data.token);
+                        setUser(data.user);
+                        localStorage.setItem("token", data.token);
                     })
                     .catch((err) => {
-                    console.error(err);
-                    navigate("/login");
+                        console.error(err);
+                        navigate("/login");
                     });
             } catch (err) {
                 console.error("Invalid token", err);
