@@ -3,15 +3,12 @@
 import { vi } from "vitest";
 import jwt from 'jsonwebtoken';
 import { getUserById} from "../../src/services/users";
-
 import { render, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
-
 import { FeedPage } from "../../src/pages/Feed/FeedPage"; // Component being tested, displays the feed post
 import {getPosts, createPost } from "../../src/services/posts"; // import WHOLE module. Service function responsible for fetching posts from the backend
 import { useNavigate } from "react-router-dom"; // Hook from react router dom for programmatic navigation within app
-import { Component } from "react";
+// import { Component } from "react";
 
 
 // Mocking the getPosts and createpost service, which get and creates posts from the backend
@@ -19,7 +16,7 @@ import { Component } from "react";
 vi.mock("../../src/services/posts", () => {
   const getPostsMock = vi.fn(); // vi.fn() is a method for creating a mock function to track calls and define return values
   const createPostMock = vi.fn(); 
-  return { getPosts: getPostsMock, createPost: createPostMock };
+  return { getPosts: getPostsMock, createPost: createPostMock };})
 
 
 // Mocking getUserById service
@@ -165,7 +162,7 @@ describe("Feed Page", () => {
   // re-render the component. check that the newest post is at the top of the list.
   test("Does the page list the posts in order from newest to oldest after re-rendering", async () =>{
       // ARRANGE
-      const user = userEvent.setup(); 
+      // const user = userEvent.setup(); 
       window.localStorage.setItem("token", "testToken");
       getPosts.mockResolvedValue({
         posts: [ 
