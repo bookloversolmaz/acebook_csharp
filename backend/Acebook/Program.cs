@@ -1,6 +1,8 @@
+using acebook.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System;
 using DotNetEnv;
@@ -11,6 +13,10 @@ var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register DbContext
+builder.Services.AddDbContext<AcebookDbContext>();
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -83,6 +89,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AcebookDbContext>();
+    db.Database.Migrate(); // This applies any pending migrations
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
