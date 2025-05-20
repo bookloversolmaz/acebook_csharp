@@ -165,27 +165,4 @@ public class UsersController : ControllerBase
 
     return Ok(new { user = userDto });
     }
-
-
-    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-    {
-      return BadRequest("User ID not found in token");
-    }
-
-    var userId = int.Parse(userIdClaim.Value);
-    var user = dbContext.Users.Find(userId);
-    var newToken = TokenService.GenerateToken(user);
-    var userDtoToReturn = new UserDto
-    {
-      _Id = userForDto._Id,
-      Username = userForDto.Username,
-      ProfilePicture = userForDto.ProfilePicture,
-      Posts = userForDto.Posts
-    };
-
-
-    // Console.WriteLine($"userDtoToReturn {userDtoToReturn.Username}");
-    return Ok(new { user = userDtoToReturn, token = newToken });
   }
-}
