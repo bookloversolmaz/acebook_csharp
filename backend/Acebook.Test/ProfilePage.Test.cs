@@ -78,22 +78,31 @@ namespace Acebook.Tests
    
       var userId = user._Id;
       // Act
-      var response = await _client.GetAsync($"/api/users/getuserbyid?id={userId}");
+      var response = await _client.GetAsync($"/api/users/getprofilepicbyid?id={userId}");
       // Assert
       response.Should().BeSuccessful();
       // var json = await response.Content.ReadFromJsonAsync<JsonElement>();
       // json.GetProperty("user").GetProperty("profilepicture").GetByte().Should().Be("TestAssets/Profile_Image_Default.png");
       var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-      var jsonString = await response.Content.ReadAsStringAsync();
-      Console.WriteLine($"jsonstring is {jsonString}"); // or use test logger
+    var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
+    base64FromApi.Should().NotBeNullOrEmpty("Profile picture should be present");
 
-      var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
-      base64FromApi.Should().NotBeNullOrEmpty();
+    var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
+    var expectedBase64 = Convert.ToBase64String(expectedBytes);
 
-      var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
-      var expectedBase64 = Convert.ToBase64String(expectedBytes);
+    base64FromApi.Should().Be(expectedBase64, "The returned base64 string should match the expected default image");
 
-      base64FromApi.Should().Be(expectedBase64);
+      // var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+      // var jsonString = await response.Content.ReadAsStringAsync();
+      // Console.WriteLine($"jsonstring is {jsonString}"); // or use test logger
+
+      // var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
+      // base64FromApi.Should().NotBeNullOrEmpty();
+
+      // var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
+      // var expectedBase64 = Convert.ToBase64String(expectedBytes);
+
+      // base64FromApi.Should().Be(expectedBase64);
     }
 }
 }
