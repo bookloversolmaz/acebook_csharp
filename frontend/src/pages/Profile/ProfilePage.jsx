@@ -75,7 +75,7 @@ export const ProfilePage = () => {
                 navigate("/login");
             }
         }, [navigate]);
-    
+     
     return (
         <>
         {user && <Username username={user.username} key={user._id}/>}
