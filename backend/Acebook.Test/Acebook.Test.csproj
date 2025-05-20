@@ -24,5 +24,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Acebook\acebook.csproj" />
   </ItemGroup>
+  <ItemGroup>
+  <None Update="TestAssets/Profile_Image_Default.png">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
 
 </Project>

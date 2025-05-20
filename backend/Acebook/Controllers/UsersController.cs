@@ -2,8 +2,12 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using BCrypt;
+using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Web;  
+using System.IO;  
+using System.Drawing; 
 using acebook.Models;
 using acebook.Services;
 namespace acebook.Controllers;
@@ -18,6 +22,16 @@ public class UsersController : ControllerBase
     _logger = logger;
   }
 
+
+    
+  [HttpGet("get-profile-picture")]
+  public IActionResult GetProfilePicture()
+  {
+      byte[] imageData = System.IO.File.ReadAllBytes("Uploads/Profile_Image_Default.png");
+      return File(imageData, "image/png"); // ✅ Correct usage
+  }
+
+    
   //SIGN-UP ROUTE
   [Route("api/users")]
   [HttpPost]
@@ -52,14 +66,30 @@ public class UsersController : ControllerBase
         Console.WriteLine($"password null or invalid");
         return BadRequest();
       }
+
+      else{  
+          user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+          if (user.ProfilePicture == null || user.ProfilePicture.Length == 0) {
+                var defaultImagePath = Path.Combine(AppContext.BaseDirectory, "Uploads", "Profile_Image_Default.png");
+                byte[] imageArray = System.IO.File.ReadAllBytes(defaultImagePath);  
+                string base64ImageRepresentation = Convert.ToBase64String(imageArray); 
+                byte[] bytes = Convert.FromBase64String(base64ImageRepresentation);  
       else
       {
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-
-        dbContext.Users.Add(user);
-        dbContext.SaveChanges();
-        string location = "api/users/" + user._Id;
-        return Created();
+            if (System.IO.File.Exists(defaultImagePath))
+          {
+            user.ProfilePicture = System.IO.File.ReadAllBytes(defaultImagePath);
+          }
+          else
+          {
+            Console.WriteLine("⚠️ Default profile image not found.");
+          }
+            }      
+          Console.WriteLine($"user.profilepic is {user.ProfilePicture}");   
+          dbContext.Users.Add(user);
+          dbContext.SaveChanges();
+          string location = "api/users/" + user._Id;
+          return Created();
       }
     }
     catch (Exception e)
@@ -109,9 +139,10 @@ public class UsersController : ControllerBase
     {
       _Id = userForDto._Id,
       Username = userForDto.Username,
-      // ProfileImage = userForDto.ProfileImage,
+      ProfilePicture = userForDto.ProfilePicture,
       Posts = userForDto.Posts
     };
+
 
     // Console.WriteLine($"userDtoToReturn {userDtoToReturn.Username}");
     return Ok(new { user = userDtoToReturn, token = newToken });
