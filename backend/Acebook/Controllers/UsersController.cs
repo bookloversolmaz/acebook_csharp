@@ -17,12 +17,10 @@ namespace acebook.Controllers;
 public class UsersController : ControllerBase
 {
   private readonly ILogger<UsersController> _logger;
-
   public UsersController(ILogger<UsersController> logger)
   {
     _logger = logger;
   }
-
 
   [HttpGet("get-profile-picture")]
   public IActionResult GetProfilePicture()
@@ -53,6 +51,7 @@ public class UsersController : ControllerBase
       {
         Console.WriteLine($"Username does not exist");
         return BadRequest();
+
       }
       else if (user.Email == null || validateEmailRegex.IsMatch(user.Email) == false)
       {
@@ -108,7 +107,6 @@ public class UsersController : ControllerBase
     return Ok(new { exists = UsernameExists });
   }
 
-
   [Route("api/users/checkemail")]
   [HttpGet]
   public IActionResult CheckEmail([FromQuery] string email)
@@ -147,21 +145,20 @@ public class UsersController : ControllerBase
     return Ok(new { user = userDtoToReturn, token = newToken });
   }
 
-
-    [HttpGet("getprofilepicbyid")]
-    public IActionResult GetProfilePicById([FromQuery] int id)
-    {
+  [HttpGet("getprofilepicbyid")]
+  public IActionResult GetProfilePicById([FromQuery] int id)
+  {
     AcebookDbContext dbContext = new AcebookDbContext();
     var user = dbContext.Users.FirstOrDefault(u => u._Id == id);
 
     if (user == null)
     {
-        return NotFound();
+      return NotFound();
     }
 
     var userDto = new
     {
-        profilePicture = user.ProfilePicture != null
+      profilePicture = user.ProfilePicture != null
             ? Convert.ToBase64String(user.ProfilePicture)
             : null
     };
