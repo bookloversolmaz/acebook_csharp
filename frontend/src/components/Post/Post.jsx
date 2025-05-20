@@ -12,8 +12,10 @@ const Post = (props) => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
   const year = String(date.getFullYear()).slice(-2); // get last two digits
+  const hours   = String(date.getHours()).padStart(2, '0');     // 00-23
+  const minutes = String(date.getMinutes()).padStart(2, '0');   // 00-59
 
-  const formattedDate = `${day}/${month}/${year}`
+  const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`
 
   useEffect(() => {
       const fetchUsername = async () => {

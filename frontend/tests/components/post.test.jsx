@@ -50,13 +50,13 @@ describe("Post component", () => {
     expect(username.textContent).toEqual("testuser");
     });
 
-  test("displays the createdAt date within the article", async () => {
+  test("displays the createdAt date and time within the article", async () => {
     const testPost = { _id: "123", message: "test message", userId: "23", createdAt: "2025-05-19T13:18:54.651074Z" };
     const token = generateTestToken();
     render(<Post post={testPost} token={token}/>);
 
     const post = await screen.findByRole("article");
     const createdAt = within(post).getByTestId("post-createdAt")
-    expect(createdAt.textContent).toEqual("19/05/25");
+    expect(createdAt.textContent).toEqual("19/05/25 14:18");
     });
 

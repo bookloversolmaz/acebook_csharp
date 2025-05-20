@@ -81,7 +81,7 @@ describe("Feed Page", () => {
     expect(username.textContent).toEqual("TestUserRuss");
   });
 
-  test("Feed Page displays createdAt Date with each post", async () => {
+  test("Feed Page displays createdAt Date and Time with each post", async () => {
     const token = generateTestToken();
     window.localStorage.setItem("token", token);
 
@@ -94,7 +94,7 @@ describe("Feed Page", () => {
 
     const post = await screen.findByRole("article");
     const username = within(post).getByTestId("post-createdAt")
-    expect(username.textContent).toEqual("19/05/25");
+    expect(username.textContent).toEqual("19/05/25 14:18");
 
   });
 
