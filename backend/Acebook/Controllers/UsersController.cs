@@ -6,8 +6,9 @@ using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.Web;  
-using System.IO;  
-using System.Drawing; 
+using System.IO;
+using System.Drawing;
+// using MemoryStream;
 using acebook.Models;
 using acebook.Services;
 namespace acebook.Controllers;
@@ -23,15 +24,12 @@ public class UsersController : ControllerBase
   }
 
 
-    
   [HttpGet("get-profile-picture")]
   public IActionResult GetProfilePicture()
   {
-      byte[] imageData = System.IO.File.ReadAllBytes("Uploads/Profile_Image_Default.png");
-      return File(imageData, "image/png"); // ✅ Correct usage
+    byte[] imageData = System.IO.File.ReadAllBytes("Uploads/Profile_Image_Default.png");
+    return File(imageData, "image/png");
   }
-
-    
   //SIGN-UP ROUTE
   [Route("api/users")]
   [HttpPost]
@@ -136,6 +134,51 @@ public class UsersController : ControllerBase
     var userId = int.Parse(userIdClaim.Value);
     var user = dbContext.Users.Find(userId);
     var newToken = TokenService.GenerateToken(user);
+    // Console.WriteLine($"useddto {UserDto}");
+    var userDtoToReturn = new UserDto
+    {
+      _Id = userForDto._Id,
+      Username = userForDto.Username,
+      ProfilePicture = userForDto.ProfilePicture,
+      Posts = userForDto.Posts
+    };
+
+    Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
+    return Ok(new { user = userDtoToReturn, token = newToken });
+  }
+
+
+    [HttpGet("getprofilepicbyid")]
+    public IActionResult GetProfilePicById([FromQuery] int id)
+    {
+    AcebookDbContext dbContext = new AcebookDbContext();
+    var user = dbContext.Users.FirstOrDefault(u => u._Id == id);
+
+    if (user == null)
+    {
+        return NotFound();
+    }
+
+    var userDto = new
+    {
+        profilePicture = user.ProfilePicture != null
+            ? Convert.ToBase64String(user.ProfilePicture)
+            : null
+    };
+
+    return Ok(new { user = userDto });
+    }
+
+
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+      return BadRequest("User ID not found in token");
+    }
+
+    var userId = int.Parse(userIdClaim.Value);
+    var user = dbContext.Users.Find(userId);
+    var newToken = TokenService.GenerateToken(user);
     var userDtoToReturn = new UserDto
     {
       _Id = userForDto._Id,
@@ -149,4 +192,3 @@ public class UsersController : ControllerBase
     return Ok(new { user = userDtoToReturn, token = newToken });
   }
 }
-
