@@ -116,6 +116,5 @@ public class UsersController : ControllerBase
     // Console.WriteLine($"userDtoToReturn {userDtoToReturn.Username}");
     return Ok(new { user = userDtoToReturn, token = newToken });
   }
-
 }
 
