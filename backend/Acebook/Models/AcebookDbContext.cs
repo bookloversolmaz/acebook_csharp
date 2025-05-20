@@ -11,8 +11,11 @@ public class AcebookDbContext : DbContext
     public string? DbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "1234";
     public string? DbName = Environment.GetEnvironmentVariable("DATABASE_NAME") ?? "acebook_csharp_test";
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    => optionsBuilder.UseNpgsql($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        Console.WriteLine($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
+        optionsBuilder.UseNpgsql($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
+    }    
+    
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
