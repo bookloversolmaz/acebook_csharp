@@ -17,7 +17,12 @@ namespace acebook.Controllers;
 public class UsersController : ControllerBase
 {
   private readonly ILogger<UsersController> _logger;
+  private readonly ILogger<UsersController> _logger;
 
+  public UsersController(ILogger<UsersController> logger)
+  {
+    _logger = logger;
+  }
   public UsersController(ILogger<UsersController> logger)
   {
     _logger = logger;
@@ -38,6 +43,11 @@ public class UsersController : ControllerBase
   {
     try
     {
+  [HttpPost]
+  public IActionResult Create([FromBody] User user)
+  {
+    try
+    {
       AcebookDbContext dbContext = new AcebookDbContext();
       bool EmailExists = dbContext.Users?.Any(u => u.Email == user.Email) ?? false;
       bool UsernameExists = dbContext.Users?.Any(u => u.Username == user.Username) ?? false;
@@ -47,9 +57,16 @@ public class UsersController : ControllerBase
 
       if (EmailExists || UsernameExists)
       {
+      if (EmailExists || UsernameExists)
+      {
         Console.WriteLine($"Email or username already in db");
         return BadRequest();
+        return BadRequest();
       }
+      else if (user.Username == null || user.Username == "")
+      {
+        Console.WriteLine($"Username does not exist");
+        return BadRequest();
       else if (user.Username == null || user.Username == "")
       {
         Console.WriteLine($"Username does not exist");
@@ -59,7 +76,13 @@ public class UsersController : ControllerBase
       {
         Console.WriteLine($"Email null or invalid");
         return BadRequest();
+      else if (user.Email == null || validateEmailRegex.IsMatch(user.Email) == false)
+      {
+        Console.WriteLine($"Email null or invalid");
+        return BadRequest();
       }
+      else if (user.Password == null || validatePasswordRegex.IsMatch(user.Password) == false)
+      {
       else if (user.Password == null || validatePasswordRegex.IsMatch(user.Password) == false)
       {
         Console.WriteLine($"password null or invalid");
@@ -95,7 +118,23 @@ public class UsersController : ControllerBase
     }
 
   }
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine("❌ Exception caught in Create(): " + e.Message);
+      return StatusCode(500, e.Message); // for debug only
+    }
 
+  }
+
+  [Route("api/users/checkusername")]
+  [HttpGet]
+  public IActionResult CheckUsername([FromQuery] string username)
+  {
+    AcebookDbContext dbContext = new AcebookDbContext();
+    bool UsernameExists = dbContext.Users?.Any(u => u.Username == username) ?? false;
+    return Ok(new { exists = UsernameExists });
+  }
   [Route("api/users/checkusername")]
   [HttpGet]
   public IActionResult CheckUsername([FromQuery] string username)
@@ -114,6 +153,14 @@ public class UsersController : ControllerBase
     bool EmailExists = dbContext.Users?.Any(u => u.Email == email) ?? false;
     return Ok(new { exists = EmailExists });
   }
+  [Route("api/users/checkemail")]
+  [HttpGet]
+  public IActionResult CheckEmail([FromQuery] string email)
+  {
+    AcebookDbContext dbContext = new AcebookDbContext();
+    bool EmailExists = dbContext.Users?.Any(u => u.Email == email) ?? false;
+    return Ok(new { exists = EmailExists });
+  }
 
   [Route("api/users/getuserbyid")]
   [HttpGet]
@@ -121,7 +168,18 @@ public class UsersController : ControllerBase
   {
     AcebookDbContext dbContext = new AcebookDbContext();
     User userForDto = dbContext.Users?.FirstOrDefault(u => u._Id == id);
+  [Route("api/users/getuserbyid")]
+  [HttpGet]
+  public IActionResult GetUserById([FromQuery] int id)
+  {
+    AcebookDbContext dbContext = new AcebookDbContext();
+    User userForDto = dbContext.Users?.FirstOrDefault(u => u._Id == id);
 
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+    {
+      return BadRequest("User ID not found in token");
+    }
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null)
     {

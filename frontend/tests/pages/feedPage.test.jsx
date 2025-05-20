@@ -1,43 +1,101 @@
+
+
+import { vi } from "vitest";
+import jwt from 'jsonwebtoken';
+import { getUserById} from "../../src/services/users";
 import { render, screen, waitFor, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
-
 import { FeedPage } from "../../src/pages/Feed/FeedPage"; // Component being tested, displays the feed post
 import {getPosts, createPost } from "../../src/services/posts"; // import WHOLE module. Service function responsible for fetching posts from the backend
 import { useNavigate } from "react-router-dom"; // Hook from react router dom for programmatic navigation within app
-import { Component } from "react";
+// import { Component } from "react";
+
 
 // Mocking the getPosts and createpost service, which get and creates posts from the backend
 // Tells vitest to replace getsPosts function with the mock getPostsMock. mocks useEffect
 vi.mock("../../src/services/posts", () => {
   const getPostsMock = vi.fn(); // vi.fn() is a method for creating a mock function to track calls and define return values
   const createPostMock = vi.fn(); 
-  return { getPosts: getPostsMock, createPost: createPostMock };
+  return { getPosts: getPostsMock, createPost: createPostMock };})
 
+
+// Mocking getUserById service
+vi.mock("../../src/services/users", () => {
+    const getUserByIdMock = vi.fn();
+    return { getUserById : getUserByIdMock };
 });
-// Mocking React Router's useNavigate function to track navigation actions during the test
-// navigate mock replaces original useNavigate
-vi.mock("react-router-dom", () => { 
+
+// Mocking React Router's useNavigate function
+vi.mock("react-router-dom", () => {
+
   const navigateMock = vi.fn();
   const useNavigateMock = () => navigateMock; // Create a mock function for useNavigate
   return { useNavigate: useNavigateMock };
 });   
 
-// Test suite setup, creating a mock token and render
+
+const generateTestToken = (payload = { userId: '123', role: 'admin' }) => {
+    const secret = 'test-secret';
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    return token;
+};
+
 describe("Feed Page", () => {
 
   beforeEach(() => { // Runs before each test, ensuring that the local storage token is cleared before each test runs to avoid state pollution.
     window.localStorage.removeItem("token");
+    vi.resetAllMocks();
   });
 
   // This test checks whether the posts fetched from the backend are displayed correctly in the FeedPage.
   test("It displays posts from the backend", async () => {
-    window.localStorage.setItem("token", "testToken"); // Set a test token in local storage to simulate user
-    const mockPosts = [{ _id: "12345", message: "Test Post 1" }]; // Creates a mock post
-    getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" }); // Mock API response
-    render(<FeedPage />); // Render feedpage
-    const post = await screen.findByRole("article"); // wait for the post to be rendered
-    expect(post.textContent).toEqual("Test Post 1"); // Assert that the post displays correctly
+
+    const token = generateTestToken();
+    window.localStorage.setItem("token", token);
+
+    const mockPosts = [{ _id: "12345", message: "Test Post 1", userId: "123" }];
+
+    getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" });
+    getUserById.mockResolvedValue({user: {username: "TestUserRuss"}});
+
+    render(<FeedPage />);
+
+    const post = await screen.findByRole("article");
+    const message = within(post).getByTestId("post-message")
+    expect(message.textContent).toEqual("Test Post 1");
+  });
+
+  test("Feed Page displays username of the poster with each post", async () => {
+    const token = generateTestToken();
+    window.localStorage.setItem("token", token);
+
+    const mockPosts = [{ _id: "12345", message: "Test Post 1", userId: "123" }];
+
+    getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" });
+    getUserById.mockResolvedValue({user: {username: "TestUserRuss"}});
+
+    render(<FeedPage />);
+
+    const post = await screen.findByRole("article");
+    const username = within(post).getByTestId("post-username")
+    expect(username.textContent).toEqual("TestUserRuss");
+  });
+
+  test("Feed Page displays createdAt Date and Time with each post", async () => {
+    const token = generateTestToken();
+    window.localStorage.setItem("token", token);
+
+    const mockPosts = [{ _id: "12345", message: "Test Post 1", userId: "123", createdAt: "2025-05-19T13:18:54.651074Z" }];
+
+    getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" });
+    getUserById.mockResolvedValue({user: {username: "TestUserRuss"}});
+
+    render(<FeedPage />);
+
+    const post = await screen.findByRole("article");
+    const username = within(post).getByTestId("post-createdAt")
+    expect(username.textContent).toEqual("19/05/25 14:18");
+
   });
 
   //  Navigating the login, if no token is present redirect to login page
@@ -104,7 +162,7 @@ describe("Feed Page", () => {
   // re-render the component. check that the newest post is at the top of the list.
   test("Does the page list the posts in order from newest to oldest after re-rendering", async () =>{
       // ARRANGE
-      const user = userEvent.setup(); 
+      // const user = userEvent.setup(); 
       window.localStorage.setItem("token", "testToken");
       getPosts.mockResolvedValue({
         posts: [ 

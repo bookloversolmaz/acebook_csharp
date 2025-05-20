@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import { ProfilePage } from "../../src/pages/Profile/ProfilePage";
@@ -20,15 +20,17 @@ vi.mock("react-router-dom", async () => {
     return { useNavigate: useNavigateMock };
 });
 
+
 const generateTestToken1 = (payload = { userId: '123', role: 'admin' }) => {
-  const secret = 'test-secret';
-  const token = jwt.sign(payload, secret, { expiresIn: '1h' });
-  return token;
+    const secret = 'test-secret';
+    const token = jwt.sign(payload, secret, { expiresIn: '1h' });
+    return token;
+
 };
 const generateTestToken2 = (payload = { userId: '1234', role: 'admin2' }) => {
-  const secret = 'test-secret2';
-  const token = jwt.sign(payload, secret, { expiresIn: '1s' });
-  return token;
+    const secret = 'test-secret2';
+    const token = jwt.sign(payload, secret, { expiresIn: '1s' });
+    return token;
 };
 
 describe("Profile Page", () => {
@@ -47,8 +49,6 @@ describe("Profile Page", () => {
     
         render(<ProfilePage />);
         screen.debug(); 
-
-
         const usernameElement = await screen.findByRole("heading", {level: 3});
         expect(usernameElement.textContent).toBe("admin");
 
@@ -65,7 +65,7 @@ describe("Profile Page", () => {
     
         render(<ProfilePage />);
         
-         const image = await screen.findByRole("img");
+        const image = await screen.findByRole("img");
         expect(image).toBeInstanceOf(HTMLImageElement);
 
         expect(image.src).toBe("http://localhost:3000/assets/Profile_Image_Default.png");
