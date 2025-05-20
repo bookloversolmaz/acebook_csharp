@@ -67,7 +67,7 @@ export const FeedPage = () => {
           onChange={handleMessageChange}
         />
 
-        <input className="mt-2 btn btn-primary" role="submit-button" id="submit" type="submit" value="Submit" />
+        <button className="mt-2 btn btn-primary" id="submit" type="submit" value="Submit">Submit</button>
 
       </form>
       <h2 className="mt-5 mb-3 fw-bold">Posts</h2>
