@@ -69,23 +69,24 @@ public class UsersController : ControllerBase
 
       else{  
           user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-          if (user.ProfilePicture == null || user.ProfilePicture.Length == 0) {
-                var defaultImagePath = Path.Combine(AppContext.BaseDirectory, "Uploads", "Profile_Image_Default.png");
-                byte[] imageArray = System.IO.File.ReadAllBytes(defaultImagePath);  
-                string base64ImageRepresentation = Convert.ToBase64String(imageArray); 
-                byte[] bytes = Convert.FromBase64String(base64ImageRepresentation);  
-      else
-      {
-            if (System.IO.File.Exists(defaultImagePath))
-          {
-            user.ProfilePicture = System.IO.File.ReadAllBytes(defaultImagePath);
-          }
-          else
-          {
-            Console.WriteLine("⚠️ Default profile image not found.");
-          }
-            }      
-          Console.WriteLine($"user.profilepic is {user.ProfilePicture}");   
+        // if (user.ProfilePicture == null || user.ProfilePicture.Length == 0)
+        // {
+        //   var defaultImagePath = Path.Combine(AppContext.BaseDirectory, "Uploads", "Profile_Image_Default.png");
+        //   byte[] imageArray = System.IO.File.ReadAllBytes(defaultImagePath);
+        //   string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+        //   byte[] bytes = Convert.FromBase64String(base64ImageRepresentation);
+        // } else
+        // {
+        //   if (System.IO.File.Exists(defaultImagePath))
+        //   {
+        //     user.ProfilePicture = System.IO.File.ReadAllBytes(defaultImagePath);
+        //   }
+        //   else
+        //   {
+        //     Console.WriteLine("⚠️ Default profile image not found.");
+        //   }
+        // }      
+          // Console.WriteLine($"user.profilepic is {user.ProfilePicture}");   
           dbContext.Users.Add(user);
           dbContext.SaveChanges();
           string location = "api/users/" + user._Id;
