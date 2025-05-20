@@ -56,18 +56,21 @@ export const FeedPage = () => {
 // Create a new post form within the feed page. Render the component
   return (
     <>
-      <h2>Create new post</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="Message">Message:</label>
+      <h2 className="mt-4 mb-3 fw-bold fst-italic">Create new post</h2>
+      <form onSubmit={handleSubmit} className="mb-5">
+        <label htmlFor="Message" className="form-label">Message:</label>
         <input
           id="Message"
           type="text"
+          className="form-control"
           value={message}
           onChange={handleMessageChange}
         />
-        <button type="submit">Submit</button>
+
+        <input className="mt-2 btn btn-primary" role="submit-button" id="submit" type="submit" value="Submit" />
+
       </form>
-      <h2>Posts</h2>
+      <h2 className="mt-5 mb-3 fw-bold">Posts</h2>
       <div className="feed" role="feed">
         {posts.map((post) => (
           <Post post={post} key={post._id} token={token} />
