@@ -21,7 +21,6 @@ export const ProfilePage = () => {
                     .then((data) => {
                         setUser(data.user);
                         localStorage.setItem("token", data.token);
-                        // console.log(`data.user.pic is ${data.user.ProfilePicture}` );
                     })
                     .catch((err) => {
                         console.error(err);
