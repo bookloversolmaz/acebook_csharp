@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLocation } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../services/users";
 import Username from "../../components/UserDetails/Username";
@@ -12,9 +12,6 @@ export const ProfilePage = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-
- 
-
                 if (token) {    
                 try {
                 const decoded = jwtDecode(token);
@@ -24,6 +21,7 @@ export const ProfilePage = () => {
                     .then((data) => {
                         setUser(data.user);
                         localStorage.setItem("token", data.token);
+                        // console.log(`data.user.pic is ${data.user.ProfilePicture}` );
                     })
                     .catch((err) => {
                         console.error(err);
@@ -41,7 +39,7 @@ export const ProfilePage = () => {
     return (
         <>
         {user && <Username username={user.username} key={user._id}/>}
-        {user && <ProfilePicture profilepicture={user.profilepicture} key={user._id}/>}
+        {user && <ProfilePicture profilePicture={user.profilePicture} key={user._id}/>}
         </>
     )
 }

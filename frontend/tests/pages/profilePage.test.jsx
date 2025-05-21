@@ -40,15 +40,13 @@ describe("Profile Page", () => {
 
     test("It displays username from the backend", async () => {
         const token = generateTestToken1();
-        console.log(`username token is ${token}`)
         window.localStorage.setItem("token", token);
-    
-        const mockUser = { _id: "123", username: "admin", profilepicture :"Profile_Image_Default.png" };
+        const mockUser = { _id: "123", username: "admin" };
     
         getUserById.mockResolvedValue({ user: mockUser, token: token });
     
         render(<ProfilePage />);
-        screen.debug(); 
+
         const usernameElement = await screen.findByRole("heading", {level: 3});
         expect(usernameElement.textContent).toBe("admin");
 
@@ -56,10 +54,10 @@ describe("Profile Page", () => {
 
         test("It displays profile picture from the backend", async () => {
         const token2 = generateTestToken2();
-        console.log(`profilepicture token is ${token2}`)
+  
         window.localStorage.setItem("token", token2);
     
-        const mockUser = { _id: "1234", username: "admin2", profilepicture : "../assets/Profile_Image_Default.png" };
+        const mockUser = { _id: "1234", username: "admin2", profilePicture : "https://storage.googleapis.com/liberis_training/Profile_Image_Default.png" };
     
         getUserById.mockResolvedValue({ user: mockUser, token: token2 });
     
@@ -68,7 +66,7 @@ describe("Profile Page", () => {
         const image = await screen.findByRole("img");
         expect(image).toBeInstanceOf(HTMLImageElement);
 
-        expect(image.src).toBe("http://localhost:3000/assets/Profile_Image_Default.png");
+        expect(image.src).toBe("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
 
     });
 
