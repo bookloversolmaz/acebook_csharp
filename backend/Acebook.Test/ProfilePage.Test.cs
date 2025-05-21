@@ -77,13 +77,35 @@ namespace Acebook.Tests
    
       var userId = user._Id;
       // Act
-      var response = await _client.GetAsync($"/api/users/getuserbyid?id={userId}");
+      var response = await _client.GetAsync($"/api/users/getprofilepicbyid?id={userId}");
       // Assert
       response.Should().BeSuccessful();
       var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+<<<<<<< HEAD
       
       json.GetProperty("user").GetProperty("profilePicture").GetString().Should().Be("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
      
+=======
+    var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
+    base64FromApi.Should().NotBeNullOrEmpty("Profile picture should be present");
+
+    var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
+    var expectedBase64 = Convert.ToBase64String(expectedBytes);
+
+    base64FromApi.Should().Be(expectedBase64, "The returned base64 string should match the expected default image");
+
+      // var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+      // var jsonString = await response.Content.ReadAsStringAsync();
+      // Console.WriteLine($"jsonstring is {jsonString}"); // or use test logger
+
+      // var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
+      // base64FromApi.Should().NotBeNullOrEmpty();
+
+      // var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
+      // var expectedBase64 = Convert.ToBase64String(expectedBytes);
+
+      // base64FromApi.Should().Be(expectedBase64);
+>>>>>>> 17f5e3770275e38d9744f287ec796bed05999837
     }
 }
 }

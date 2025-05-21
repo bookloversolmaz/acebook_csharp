@@ -50,6 +50,7 @@ public class UsersController : ControllerBase
       {
         Console.WriteLine($"Username does not exist");
         return BadRequest();
+
       }
       else if (user.Email == null || validateEmailRegex.IsMatch(user.Email) == false)
       {
@@ -124,6 +125,7 @@ public class UsersController : ControllerBase
     var userId = int.Parse(userIdClaim.Value);
     var user = dbContext.Users.Find(userId);
     var newToken = TokenService.GenerateToken(user);
+    // Console.WriteLine($"useddto {UserDto}");
     // Console.WriteLine($"useddto {UserDto}");
     var userDtoToReturn = new UserDto
     {
