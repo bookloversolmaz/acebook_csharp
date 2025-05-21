@@ -12,7 +12,7 @@ public class AcebookDbContext : DbContext
     public string? DbName = Environment.GetEnvironmentVariable("DATABASE_NAME") ?? "acebook_csharp_test";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-        Console.WriteLine($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
+        // Console.WriteLine($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
         optionsBuilder.UseNpgsql($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
     }    
     

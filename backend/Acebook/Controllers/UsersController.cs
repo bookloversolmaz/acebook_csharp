@@ -117,9 +117,9 @@ public class UsersController : ControllerBase
 
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null)
-    {
-      return BadRequest("User ID not found in token");
-    }
+      {
+        return BadRequest("User ID not found in token");
+      }
 
     var userId = int.Parse(userIdClaim.Value);
     var user = dbContext.Users.Find(userId);
