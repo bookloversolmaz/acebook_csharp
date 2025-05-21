@@ -5,6 +5,7 @@ public class AcebookDbContext : DbContext
 {
     public DbSet<Post>? Posts { get; set; }
     public DbSet<User>? Users { get; set; }
+    public DbSet<Comment>? Comments { get; set; }
     public string? DbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
 
     public string? DbUsername = Environment.GetEnvironmentVariable("DATABASE_USERNAME") ?? "postgres";
@@ -12,7 +13,7 @@ public class AcebookDbContext : DbContext
     public string? DbName = Environment.GetEnvironmentVariable("DATABASE_NAME") ?? "acebook_csharp_test";
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-        // Console.WriteLine($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
+        Console.WriteLine($"====== Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName} =====");
         optionsBuilder.UseNpgsql($"Host={DbHost};Username={DbUsername};Password={DbPassword};Database={DbName}");
     }    
     

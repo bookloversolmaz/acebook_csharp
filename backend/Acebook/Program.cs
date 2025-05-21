@@ -17,6 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Register DbContext
 builder.Services.AddDbContext<AcebookDbContext>();
 
+builder.Logging.SetMinimumLevel(LogLevel.Information);
+
+
+Console.WriteLine(">>> Hello from Program.cs <<<");
+
 
 // Add services to the container.
 builder.Services.AddControllers();

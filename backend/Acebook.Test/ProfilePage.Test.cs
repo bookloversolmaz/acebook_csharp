@@ -8,6 +8,9 @@ using System;
 using Microsoft.Extensions.Logging; // For ILogger&lt;&gt;
 using NSubstitute;
 using acebook.Models;
+using DotNetEnv;
+
+Env.Load(".env");
 
 namespace Acebook.Tests
 {
@@ -75,7 +78,7 @@ namespace Acebook.Tests
       // Arrange
       AcebookDbContext dbContext = new AcebookDbContext();
       User user = dbContext.Users?.FirstOrDefault(u => u.Username == userData.Username);
-   
+
       var userId = user._Id;
       // Act
       var response = await _client.GetAsync($"/api/users/getuserbyid?id={userId}");

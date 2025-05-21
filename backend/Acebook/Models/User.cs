@@ -11,7 +11,6 @@ public class User
 
   public byte[]? ProfilePicture { get; set; }
   public ICollection<Post>? Posts { get; set; }
-
-  
+  public ICollection<Comment>? Comments { get; set; }
 
 }
