@@ -21,7 +21,6 @@ namespace Acebook.Tests
       Username = "Lina",
       Email = "lina@email.com",
       Password = "Secret123!",
-      ProfilePicture = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"))
     };
 
 
@@ -78,31 +77,13 @@ namespace Acebook.Tests
    
       var userId = user._Id;
       // Act
-      var response = await _client.GetAsync($"/api/users/getprofilepicbyid?id={userId}");
+      var response = await _client.GetAsync($"/api/users/getuserbyid?id={userId}");
       // Assert
       response.Should().BeSuccessful();
-      // var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-      // json.GetProperty("user").GetProperty("profilepicture").GetByte().Should().Be("TestAssets/Profile_Image_Default.png");
       var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-    var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
-    base64FromApi.Should().NotBeNullOrEmpty("Profile picture should be present");
-
-    var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
-    var expectedBase64 = Convert.ToBase64String(expectedBytes);
-
-    base64FromApi.Should().Be(expectedBase64, "The returned base64 string should match the expected default image");
-
-      // var json = await response.Content.ReadFromJsonAsync<JsonElement>();
-      // var jsonString = await response.Content.ReadAsStringAsync();
-      // Console.WriteLine($"jsonstring is {jsonString}"); // or use test logger
-
-      // var base64FromApi = json.GetProperty("user").GetProperty("profilePicture").GetString();
-      // base64FromApi.Should().NotBeNullOrEmpty();
-
-      // var expectedBytes = File.ReadAllBytes(Path.Combine("TestAssets", "Profile_Image_Default.png"));
-      // var expectedBase64 = Convert.ToBase64String(expectedBytes);
-
-      // base64FromApi.Should().Be(expectedBase64);
+      
+      json.GetProperty("user").GetProperty("profilePicture").GetString().Should().Be("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
+     
     }
 }
 }
