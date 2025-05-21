@@ -12,8 +12,8 @@ using acebook.Models;
 namespace acebook.Migrations
 {
     [DbContext(typeof(AcebookDbContext))]
-    [Migration("20250513152559_AddedQuestionMarkToDate")]
-    partial class AddedQuestionMarkToDate
+    [Migration("20250521120754_ChangedProfilePicType")]
+    partial class ChangedProfilePicType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +61,12 @@ namespace acebook.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
                         .HasColumnType("text");
 
                     b.HasKey("_Id");

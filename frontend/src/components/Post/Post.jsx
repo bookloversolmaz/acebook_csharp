@@ -1,6 +1,5 @@
 // components: reusable pieces of React code. returns id and message
 import { useState, useEffect } from 'react';
-// import {getUserById} from "../../services/users";
 import * as usersService from "../../services/users"
 
 // TODO: include datetime
@@ -22,7 +21,6 @@ const Post = (props) => {
         try {
             const posterUserId = props.post.userId;
             const data = await usersService.getUserById(props.token, posterUserId);
-            console.log(`Here is the username: ${data.user.username}`);
             setUsername(data.user.username);
         } catch (error) {
           console.error("Error fetching user:", error);

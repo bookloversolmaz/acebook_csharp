@@ -9,13 +9,14 @@ describe("ProfilePicture", () => {
             username: "testuser1", 
             email: "testuser1@example.com", 
             password: "Secret123!" ,
-            profilepicture : "Profile_Image_Default.png"};
-        render(<ProfilePicture profilepicture={testUser.profilepicture} />);
+            ProfilePicture: "https://storage.googleapis.com/liberis_training/Profile_Image_Default.png"
+            };
+        render(<ProfilePicture profilePicture={testUser.ProfilePicture} />);
         
         const displayedImage = document.querySelector("img")
         expect(displayedImage).toBeInstanceOf(HTMLImageElement);
 
         const image = screen.getByRole("img");
-        expect(image.src).toBe("http://localhost:3000/assets/Profile_Image_Default.png");
+        expect(image.src).toBe("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
     });
 });

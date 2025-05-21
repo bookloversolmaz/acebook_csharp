@@ -60,8 +60,8 @@ namespace acebook.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("ProfilePicture")
-                        .HasColumnType("bytea");
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .HasColumnType("text");
