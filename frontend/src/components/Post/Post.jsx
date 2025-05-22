@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as usersService from "../../services/users";
 import DisplayAllCommentsForAPost from "../Comments/DisplayAllCommentsForAPost";
 
-// Props are: post={post} key={post._id} token={token}; 
+// Props are: post={post} key={post._Id} token={token}; 
 const Post = (props) => {
   const[username, setUsername] = useState('');
   const[profilePicture, setProfilePicture] = useState('');
@@ -48,7 +48,7 @@ const Post = (props) => {
               <p className="card-text mt-4 mb-0 text-start" data-testid="post-message">{props.post.message}</p>
           </div>
         </div>
-          <DisplayAllCommentsForAPost token={props.token} postId={props.post._id}/>
+          <DisplayAllCommentsForAPost token={props.token} postId={props.post._Id}/>
       </div>
     </article>);
 };
