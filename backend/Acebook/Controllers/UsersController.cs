@@ -62,7 +62,8 @@ public class UsersController : ControllerBase
         Console.WriteLine($"password null or invalid");
         return BadRequest();
       }
-      else { user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+      else {
+        
         if (user.ProfilePicture == null || user.ProfilePicture.Length == 0)
         {
           user.ProfilePicture = "https://storage.googleapis.com/liberis_training/Profile_Image_Default.png";
@@ -71,8 +72,7 @@ public class UsersController : ControllerBase
         {
           Console.WriteLine("⚠️ Default profile image not found.");
         }
-
-        Console.WriteLine($"user.profilepic is {user.ProfilePicture}");
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
         dbContext.Users.Add(user);
         dbContext.SaveChanges();
         string location = "api/users/" + user._Id;

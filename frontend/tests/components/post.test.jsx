@@ -4,6 +4,7 @@ import Post from "../../src/components/Post/Post";
 import { getUserById} from "../../src/services/users";
 import jwt from 'jsonwebtoken';
 
+
 // Setup mock for getUserById Service
 vi.mock("../../src/services/users", () => {
     const getUserByIdMock = vi.fn();
@@ -22,14 +23,12 @@ describe("Post component", () => {
         //Setup the mock return value
       getUserById.mockResolvedValue({
       user: {
-        username: "testuser"
+        username: "testuser",
+        profilePicture: "https://storage.googleapis.com/liberis_training/Profile_Image_Default.png"
       }
   });
 });
-
-
-
-  test("displays the message as an article", () => {
+   test("displays the message as an article", () => {
     const testPost = { _id: "123", message: "test message", userId: "23", createdAt: "2025-05-19T13:18:54.651074Z" };
     const token = generateTestToken();
     render(<Post post={testPost} token={token} />);
@@ -38,7 +37,6 @@ describe("Post component", () => {
     const message = within(post).getByTestId("post-message")
     expect(message.textContent).toBe("test message");
   });
-});
 
   test("displays the username within the article", async () => {
     const testPost = { _id: "123", message: "test message", userId: "23", createdAt: "2025-05-19T13:18:54.651074Z" };
@@ -60,3 +58,22 @@ describe("Post component", () => {
     expect(createdAt.textContent).toEqual("19/05/25 14:18");
     });
 
+    test("displays the profile picture", async () => {
+    const testPost = { _id: "123", message: "test message", userId: "23", createdAt: "2025-05-19T13:19:54.651074Z" };
+  
+  
+    const token = generateTestToken();
+    render(<Post post={testPost} token={token}/>);
+
+    const image = await screen.findByRole("img");
+    expect(image.src).toBe("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
+
+  });
+});
+
+  
+
+
+
+ 
+  

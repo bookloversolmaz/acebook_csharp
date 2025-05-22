@@ -1,10 +1,13 @@
 // components: reusable pieces of React code. returns id and message
 import { useState, useEffect } from 'react';
 import * as usersService from "../../services/users"
+import ProfilePicture from '../UserDetails/ProfilePicture';
 
 // TODO: include datetime
 const Post = (props) => {
   const[username, setUsername] = useState('');
+  const[profilePicture, setProfilePicture] = useState('');
+  
   const createdAtISO = props.post.createdAt
   const date = new Date(createdAtISO)
 
@@ -27,13 +30,26 @@ const Post = (props) => {
         }
       };
       fetchUsername();
-  }, [props.post.userId, props.token]);
 
+      const fetchProfilePicture = async () => {
+        try {
+            const posterUserId = props.post.userId;
+            const data = await usersService.getUserById(props.token, posterUserId);
+            setProfilePicture(data.user.profilePicture);
+            console.log(`data.user.profilePicture is ${data.user.profilePicture}`)
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      };
+      fetchProfilePicture();
+  }, [props.post.userId, props.token]);
   return (
     <article className="card mb-3 shadow-sm border-primary bg-light" key={props.post._id}>
       <div className="card-body">
           <div className="d-flex justify-content-between align-items-center mb-2">
-              <h5 className="card-title mb-0 fw-bold" data-testid="post-username">{username}</h5>              
+              <h5 className="card-title mb-0 fw-bold" data-testid="post-username">{username}</h5>
+              <img src={`${profilePicture}`} data-testid="post-profilepicture" className="mb-0 rounded-circle"
+        style={{ width: "32px", height: "32px", objectFit: "cover" }} />              
                   <p data-testid="post-createdAt" className="mb-0 text-muted small">{formattedDate}</p>
           </div>
           <div data-testid="post-message">
