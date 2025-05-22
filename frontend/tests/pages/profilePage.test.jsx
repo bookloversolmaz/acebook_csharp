@@ -69,6 +69,23 @@ describe("Profile Page", () => {
         expect(image.src).toBe("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
 
     });
+     test("It displays create post form ", async () => {
+        const token2 = generateTestToken2();
+  
+        window.localStorage.setItem("token", token2);
+    
+        const mockUser = { _id: "1234", username: "admin2", profilePicture : "https://storage.googleapis.com/liberis_training/Profile_Image_Default.png" };
+    
+        getUserById.mockResolvedValue({ user: mockUser, token: token2 });
+    
+        render(<ProfilePage />);
+        
+        const heading = await screen.findByRole("heading", {level: 2})
+
+        expect(heading.textContent).toContain("Create new post");
+
+    });
+    
 
     test("It navigates to login if no token is present", async () => {
         render(<ProfilePage />);
