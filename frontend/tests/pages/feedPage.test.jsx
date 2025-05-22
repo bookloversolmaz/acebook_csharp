@@ -72,13 +72,14 @@ describe("Feed Page", () => {
     const mockPosts = [{ _id: "12345", message: "Test Post 1", userId: "123" }];
 
     getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" });
-    getUserById.mockResolvedValue({user: {username: "TestUserRuss"}});
+    getUserById.mockResolvedValue({user: {username: "admin"}});
 
     render(<FeedPage />);
 
     const post = await screen.findByRole("article");
-    const username = await within(post).findByTestId("post-username");
-    expect(username.textContent).toEqual("TestUserRuss");
+    const username = within(post).getByTestId("post-username")
+    expect(username.textContent).toEqual("admin");
+
   });
 
   test("Feed Page displays createdAt Date and Time with each post", async () => {

@@ -31,6 +31,9 @@ const Post = (props) => {
       };
       fetchUsername();
   }, [props.post.userId, props.token]);
+
+
+  
   return (
     <article className="card mb-3 shadow-sm border-primary bg-light">
       <div className="card-body">
@@ -41,8 +44,8 @@ const Post = (props) => {
                   style={{ width: "32px", height: "32px", objectFit: "cover" }} />              
               <p data-testid="post-createdAt" className="mb-0 text-muted small">{formattedDate}</p>
           </div>
-          <div data-testid="post-message">
-              <p className="card-text mt-4 mb-0 text-start">{props.post.message}</p>
+          <div >
+              <p className="card-text mt-4 mb-0 text-start" data-testid="messages">{props.post.message}</p>
           </div>
         </div>
           <DisplayAllCommentsForAPost token={props.token} postId={props.post._Id}/>
