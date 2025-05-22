@@ -27,6 +27,7 @@ const CreateCommentForm = ({token, onCommentCreated, postId }) => {
                 <div className="d-flex">
                     <input
                     id="Message"
+                    aria-label="Comment Message"
                     type="text"
                     className="form-control me-2"
                     value={message}
@@ -36,8 +37,6 @@ const CreateCommentForm = ({token, onCommentCreated, postId }) => {
                     />
                     <button className="mt-2 btn btn-primary" id="submit" type="submit" value="Submit">Submit</button>
                 </div>
-
-            
             </form>
         </div>
     )

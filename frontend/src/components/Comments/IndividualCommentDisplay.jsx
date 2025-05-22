@@ -1,8 +1,5 @@
-// components: reusable pieces of React code. returns id and message
 import { useState, useEffect } from 'react';
 import * as usersService from "../../services/users"
-// import { getCommentsByPostId } from "../../services/comments"
-// import ProfilePicture from '../UserDetails/ProfilePicture';
 
 // Props is the comment and a token
 const IndividualCommentDisplay = (props) => {
