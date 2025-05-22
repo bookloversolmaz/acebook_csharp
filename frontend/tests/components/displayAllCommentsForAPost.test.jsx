@@ -12,7 +12,7 @@ vi.mock("../../src/services/comments", () => {
 
 // Mock IndividualCommentsDisplay component
 vi.mock("../../src/Components/IndividualCommentDisplay", () => ({
-    default: ({ comment }) => <div>{comment.message}</div>,
+    default: ({ comment }) => <div data-testid="comment-message">{comment.message}</div>,
 }));
 
 vi.mock("../../src/components/Comments/CreateCommentForm", () => ({
@@ -43,26 +43,24 @@ describe("DisplayAllCommentsForAPost component", () => {
         })
     });
 
-    // eslint-disable-next-line vitest/expect-expect, vitest/no-commented-out-tests
-    // test("adds new comment when onCommentCreated is called", async () => {
-    //     getCommentsByPostId.mockResolvedValueOnce({
-    //         comments: [
-    //             { _id: "1", message: "Comment 1" },
-    //             { _id: "2", message: "Comment 2" },
-    //         ],
-    //     });
+    // eslint-disable-next-line vitest/expect-expect
+    test("adds new comment when onCommentCreated is called", async () => {
+        getCommentsByPostId.mockResolvedValueOnce({
+            comments: [
+                { _id: "1", message: "Comment 1" },
+                { _id: "2", message: "Comment 2" },
+            ],
+        });
 
-    //     render(
-    //         <DisplayAllCommentsForAPost token="mock-token" postId="123" />
-    //     );
+        render(
+            <DisplayAllCommentsForAPost token="mock-token" postId="123" />
+        );
 
-    //     await screen.findByText("");
-    //     screen.getByText("Mock Submit").click();
+        screen.getByText("Mock Submit").click();
+        const comments = await screen.findAllByTestId("comment-message");
+        expect(comments[0].textContent).toBe("New comment");
 
-    //     // expect(screen.getByText("New comment")).toBeInTheDocument();
-    //     // assert.exists(screen.queryByText("New comment"));
-    //     expect(screen.getByTestId('comment-message').textContent).toBe('New comment')
-    // }
+    }
 
-    // )
-});
+    )
+}); 

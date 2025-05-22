@@ -88,9 +88,9 @@ describe("Profile Page", () => {
         expect(image.src).toBe("https://storage.googleapis.com/liberis_training/Profile_Image_Default.png");
 
     });
-     test("It displays create post form ", async () => {
+    test("It displays create post form", async () => {
         const token3 = generateTestToken3();
-  
+
         window.localStorage.setItem("token", token3);
     
         const mockUser = { _id: "1236", username: "admin3", profilePicture : "https://storage.googleapis.com/liberis_training/Profile_Image_Default.png" };
@@ -125,7 +125,7 @@ describe("Profile Page", () => {
     render(<ProfilePage />);
 
     
-    const message = await screen.findAllByTestId("messages");
+    const message = await screen.findAllByTestId("post-message");
     expect(message).toHaveLength(2);
     expect(message[0].textContent).toBe("Test Post 1");
     expect(message[1].textContent).toBe("Test Post 2");

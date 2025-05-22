@@ -22,7 +22,7 @@ describe("posts service", () => {
       const url = fetchArguments[0];
       const options = fetchArguments[1];
 
-      expect(url).toEqual(`${BACKEND_URL}/posts`);
+      expect(url).toEqual(`${BACKEND_URL}/posts/`);
       expect(options.method).toEqual("GET");
       expect(options.headers["Authorization"]).toEqual("Bearer testToken");
     });

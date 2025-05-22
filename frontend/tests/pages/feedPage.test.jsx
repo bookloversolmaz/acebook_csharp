@@ -60,8 +60,8 @@ describe("Feed Page", () => {
 
     render(<FeedPage />);
 
-    const post = await screen.findByRole("article");
-    const message = within(post).getByTestId("post-message")
+    const post = await screen.findByTestId("post-article");
+    const message = await within(post).findByTestId("post-message")
     expect(message.textContent).toEqual("Test Post 1");
   });
 
@@ -76,8 +76,8 @@ describe("Feed Page", () => {
 
     render(<FeedPage />);
 
-    const post = await screen.findByRole("article");
-    const username = within(post).getByTestId("post-username")
+    const post = await screen.findByTestId("post-article");
+    const username = await within(post).findByTestId("post-username");
     expect(username.textContent).toEqual("admin");
 
   });

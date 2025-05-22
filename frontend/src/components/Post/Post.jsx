@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as usersService from "../../services/users";
 import DisplayAllCommentsForAPost from "../Comments/DisplayAllCommentsForAPost";
 
-// Props are: post={post} key={post._Id} token={token}; 
+// Props are: post={post} key={post._id} token={token}; 
 const Post = (props) => {
   const[username, setUsername] = useState('');
   const[profilePicture, setProfilePicture] = useState('');
@@ -35,7 +35,7 @@ const Post = (props) => {
 
   
   return (
-    <article className="card mb-3 shadow-sm border-primary bg-light">
+    <article className="card mb-3 shadow-sm border-primary bg-light" data-testid="post-article">
       <div className="card-body">
         <div className="card-body shadow border-primary bg-white">
           <div className="d-flex justify-content-between align-items-center mb-2">
@@ -45,10 +45,10 @@ const Post = (props) => {
               <p data-testid="post-createdAt" className="mb-0 text-muted small">{formattedDate}</p>
           </div>
           <div >
-              <p className="card-text mt-4 mb-0 text-start" data-testid="messages">{props.post.message}</p>
+              <p className="card-text mt-4 mb-0 text-start" data-testid="post-message">{props.post.message}</p>
           </div>
         </div>
-          <DisplayAllCommentsForAPost token={props.token} postId={props.post._Id}/>
+          <DisplayAllCommentsForAPost token={props.token} postId={props.post._id}/>
       </div>
     </article>);
 };
