@@ -49,7 +49,7 @@ export const FeedPage = () => {
       <h2 className="mt-5 mb-3 fw-bold">Posts</h2>
       <div className="feed" role="feed">
         {posts.map((post) => (
-          <Post post={post} key={post._Id} token={token} />
+          <Post post={post} key={post._id} token={token} />
         ))}
       </div>
     </>
