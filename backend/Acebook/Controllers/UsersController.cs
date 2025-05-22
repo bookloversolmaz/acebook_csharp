@@ -135,7 +135,7 @@ public class UsersController : ControllerBase
       Posts = userForDto.Posts
     };
 
-    Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
+    // Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
     return Ok(new { user = userDtoToReturn, token = newToken });
   }
 
