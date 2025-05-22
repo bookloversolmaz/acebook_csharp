@@ -42,6 +42,7 @@ export const FeedPage = () => {
     setPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
+
 // Create a new post form within the feed page. Render the component
   return (
     <>
@@ -49,7 +50,7 @@ export const FeedPage = () => {
       <h2 className="mt-5 mb-3 fw-bold">Posts</h2>
       <div className="feed" role="feed">
         {posts.map((post) => (
-          <Post post={post} key={post._id} token={token} />
+          <Post post={post} key={post._Id} token={token} />
         ))}
       </div>
     </>
