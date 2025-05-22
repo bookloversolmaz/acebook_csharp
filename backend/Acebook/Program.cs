@@ -9,6 +9,7 @@ using DotNetEnv;
 
 Env.Load(".env");
 
+
 var configBuilder = new ConfigurationBuilder();
 configBuilder.AddEnvironmentVariables();
 
@@ -116,11 +117,17 @@ else
     app.UseExceptionHandler("/error");
 }
 
+app.UseWebSockets(new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(2)
+});
+
+
+
 app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();

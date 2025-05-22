@@ -77,7 +77,7 @@ describe("Feed Page", () => {
     render(<FeedPage />);
 
     const post = await screen.findByRole("article");
-    const username = within(post).getByTestId("post-username")
+    const username = await within(post).getByTestId("post-username")
     expect(username.textContent).toEqual("TestUserRuss");
   });
 
