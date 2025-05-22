@@ -13,7 +13,7 @@ export const getPosts = async (token) => {
     },
   };
 
-  const response = await fetch(`${BACKEND_URL}/posts`, requestOptions);
+  const response = await fetch(`${BACKEND_URL}/posts/`, requestOptions);
 
   if (response.status !== 200) {
     throw new Error("Unable to fetch posts");
@@ -37,12 +37,12 @@ export const createPost = async (token, message) => {
     body: JSON.stringify(postMessage)
   };
 
-  const request = await fetch(`${BACKEND_URL}/posts`, requestOptions); //Browser suggests
+  const response = await fetch(`${BACKEND_URL}/posts/`, requestOptions); //Browser suggests
 
-  if (request.status !== 201) {
+  if (response.status !== 201) {
     throw new Error("Unable to fetch posts");
   }
 
-  const data = await request.json();
+  const data = await response.json();
   return data;
 };
