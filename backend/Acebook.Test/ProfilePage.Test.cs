@@ -82,6 +82,7 @@ namespace Acebook.Tests
       // Act
       var response = await _client.GetAsync($"/api/users/getuserbyid?id={userId}");
       // Assert
+      Console.WriteLine($"response is {response}");
       response.Should().BeSuccessful();
       var json = await response.Content.ReadFromJsonAsync<JsonElement>();
     

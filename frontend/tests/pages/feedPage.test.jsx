@@ -72,13 +72,14 @@ describe("Feed Page", () => {
     const mockPosts = [{ _id: "12345", message: "Test Post 1", userId: "123" }];
 
     getPosts.mockResolvedValue({ posts: mockPosts, token: "newToken" });
-    getUserById.mockResolvedValue({user: {username: "TestUserRuss"}});
+    getUserById.mockResolvedValue({user: {username: "admin"}});
 
     render(<FeedPage />);
 
     const post = await screen.findByRole("article");
-    const username = await within(post).getByTestId("post-username")
-    expect(username.textContent).toEqual("TestUserRuss");
+    const username = within(post).getByTestId("post-username")
+    expect(username.textContent).toEqual("admin");
+
   });
 
   test("Feed Page displays createdAt Date and Time with each post", async () => {
@@ -128,7 +129,7 @@ describe("Feed Page", () => {
     // Selects the text input by its label "Message:"
     const input = screen.getByLabelText(/message/i);
     await user.type(input, "test post");
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByTestId("post-submit", { name: /submit/i });
     await user.click(submitButton);
     // ASSERT
     // createPost was called with correct arguments (token and message)
@@ -151,8 +152,8 @@ describe("Feed Page", () => {
       await screen.findByText("Old Post");
       // Mock createPost response (newer post)
       createPost.mockResolvedValue({post: { _id: "2", message: "New Post" },});
-      await user.type(screen.getByLabelText(/message/i), "New Post");
-      await user.click(screen.getByRole("button", { name: /submit/i }));
+      await user.type(screen.getByLabelText(/message:/i), "New Post");
+      await user.click(screen.getByTestId("post-submit", { name: /submit/i }));
       // ASSERT: After submission, both posts should be in the feed
       const postsAfterCreate = await screen.findAllByRole("article");
       expect(postsAfterCreate).toHaveLength(2);

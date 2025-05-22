@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Web;  
 using System.IO;
 using System.Drawing;
+using Microsoft.EntityFrameworkCore;
 
 using acebook.Models;
 using acebook.Services;
@@ -114,7 +115,9 @@ public class UsersController : ControllerBase
   public IActionResult GetUserById([FromQuery] int id)
   {
     AcebookDbContext dbContext = new AcebookDbContext();
-    User userForDto = dbContext.Users?.FirstOrDefault(u => u._Id == id);
+    User userForDto = dbContext.Users?
+      // .Include(u => u.Posts)
+      .FirstOrDefault(u => u._Id == id);
 
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
     if (userIdClaim == null)
@@ -126,7 +129,6 @@ public class UsersController : ControllerBase
     var user = dbContext.Users.Find(userId);
     var newToken = TokenService.GenerateToken(user);
     // Console.WriteLine($"useddto {UserDto}");
-    // Console.WriteLine($"useddto {UserDto}");
     var userDtoToReturn = new UserDto
     {
       _Id = userForDto._Id,
@@ -134,8 +136,6 @@ public class UsersController : ControllerBase
       ProfilePicture = userForDto.ProfilePicture,
       Posts = userForDto.Posts
     };
-
-    Console.WriteLine($"userDtoToReturn {userDtoToReturn.ProfilePicture}");
     return Ok(new { user = userDtoToReturn, token = newToken });
   }
 

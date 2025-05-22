@@ -26,8 +26,9 @@ public class PostsController : ControllerBase
         // List<Post> posts = dbContext.Posts.ToList();
         // order list from newest to oldest, replacing statement above
         List<Post> posts = dbContext.Posts
-        .OrderByDescending(p => p.CreatedAt)
-        .ToList();
+            // .Include(p => p.Comments)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToList();
         // Get the current user's ID from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null)
@@ -41,12 +42,11 @@ public class PostsController : ControllerBase
 
         var postDtos = posts.Select(p => new PostDto
         {
-            // Get method, takes info from the database. Add username here
             _Id = p._Id,
             Message = p.Message,
             UserId = p.UserId,
-            CreatedAt = p.CreatedAt
-            // username
+            CreatedAt = p.CreatedAt,
+            // Comments = p.Comments
         }).ToList();
 
         return Ok(new {posts = postDtos, token = newToken});
