@@ -151,7 +151,7 @@ describe("Feed Page", () => {
       await screen.findByText("Old Post");
       // Mock createPost response (newer post)
       createPost.mockResolvedValue({post: { _id: "2", message: "New Post" },});
-      await user.type(screen.getByLabelText(/message/i), "New Post");
+      await user.type(screen.getByLabelText(/message:/i), "New Post");
       await user.click(screen.getByTestId("post-submit", { name: /submit/i }));
       // ASSERT: After submission, both posts should be in the feed
       const postsAfterCreate = await screen.findAllByRole("article");
