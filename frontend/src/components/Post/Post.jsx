@@ -1,9 +1,8 @@
-// components: reusable pieces of React code. returns id and message
 import { useState, useEffect } from 'react';
-import * as usersService from "../../services/users"
-import ProfilePicture from '../UserDetails/ProfilePicture';
+import * as usersService from "../../services/users";
+import DisplayAllCommentsForAPost from "../Comments/DisplayAllCommentsForAPost";
 
-// TODO: include datetime
+// Props are: post={post} key={post._Id} token={token}; 
 const Post = (props) => {
   const[username, setUsername] = useState('');
   const[profilePicture, setProfilePicture] = useState('');
@@ -25,42 +24,33 @@ const Post = (props) => {
             const posterUserId = props.post.userId;
             const data = await usersService.getUserById(props.token, posterUserId);
             setUsername(data.user.username);
+            setProfilePicture(data.user.profilePicture);
         } catch (error) {
           console.error("Error fetching user:", error);
         }
       };
       fetchUsername();
-
-      const fetchProfilePicture = async () => {
-        try {
-            const posterUserId = props.post.userId;
-            const data = await usersService.getUserById(props.token, posterUserId);
-            setProfilePicture(data.user.profilePicture);
-            console.log(`data.user.profilePicture is ${data.user.profilePicture}`)
-        } catch (error) {
-          console.error("Error fetching user:", error);
-        }
-      };
-      fetchProfilePicture();
   }, [props.post.userId, props.token]);
 
 
   
   return (
-    <article className="card mb-3 shadow-sm border-primary bg-light" key={props.post._id}>
+    <article className="card mb-3 shadow-sm border-primary bg-light">
       <div className="card-body">
+        <div className="card-body shadow border-primary bg-white">
           <div className="d-flex justify-content-between align-items-center mb-2">
               <h5 className="card-title mb-0 fw-bold" data-testid="post-username">{username}</h5>
               <img src={`${profilePicture}`} data-testid="post-profilepicture" className="mb-0 rounded-circle"
-        style={{ width: "32px", height: "32px", objectFit: "cover" }} />              
-                  <p data-testid="post-createdAt" className="mb-0 text-muted small">{formattedDate}</p>
+                  style={{ width: "32px", height: "32px", objectFit: "cover" }} />              
+              <p data-testid="post-createdAt" className="mb-0 text-muted small">{formattedDate}</p>
           </div>
           <div >
               <p className="card-text mt-4 mb-0 text-start" data-testid="messages">{props.post.message}</p>
           </div>
+        </div>
+          <DisplayAllCommentsForAPost token={props.token} postId={props.post._Id}/>
       </div>
     </article>);
-  // Include datetime in component
 };
 
 export default Post;

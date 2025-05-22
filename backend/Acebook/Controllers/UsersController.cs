@@ -136,7 +136,6 @@ public class UsersController : ControllerBase
       ProfilePicture = userForDto.ProfilePicture,
       Posts = userForDto.Posts
     };
-
     return Ok(new { user = userDtoToReturn, token = newToken });
   }
 

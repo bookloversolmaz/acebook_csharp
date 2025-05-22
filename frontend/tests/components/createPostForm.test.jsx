@@ -3,14 +3,7 @@ import CreatePostForm from "../../src/components/Post/CreatePostForm";
 import { vi } from "vitest";
 import { createPost } from "../../src/services/posts";
 
-
-// const createPostMock: vi.fn();
-// // // Mock the createPost function VERSION 1
-// vi.mock("../../../src/services/posts", () => ({
-//     createPost : createPostMock
-// }));
-
-// Mock the createPost function VERSION 2
+// Mock the createPost function
 vi.mock("../../src/services/posts", () => ({
     createPost: vi.fn()
 }));

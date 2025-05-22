@@ -32,7 +32,7 @@ const CreatePostForm = ({token, onPostCreated }) => {
                 value={message}
                 onChange={handleMessageChange}
                 />
-                <button className="mt-2 btn btn-primary" id="submit" type="submit" value="Submit">Submit</button>
+                <button className="mt-2 btn btn-primary" data-testid="post-submit" id="submit" type="submit" value="Submit">Submit</button>
             </form>
         </>
     )
