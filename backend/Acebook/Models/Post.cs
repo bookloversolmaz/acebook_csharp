@@ -10,6 +10,6 @@ public class Post
   public int UserId { get; set; }
   public User? User { get; set; }
   public DateTime? CreatedAt { get; set; }
-  // public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Set default value
+  public ICollection<Comment>? Comments { get; set; }
 
 }
