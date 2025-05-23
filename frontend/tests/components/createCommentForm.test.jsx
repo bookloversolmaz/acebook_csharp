@@ -19,7 +19,7 @@ describe("CreateCommentForm", () => {
         render(<CreateCommentForm token={mockToken} onCommentCreated={mockOnCommentCreated} postId={mockComment.postId}/>)
 
         const input = screen.getByLabelText(/comment message/i);
-        const button = screen.getByRole("button", { name: /submit/i });
+        const button = screen.getByRole("button", { name: /comment/i });
 
         // Type into input
         fireEvent.change(input, { target: {value: "Test Comment 1" }});
@@ -28,10 +28,6 @@ describe("CreateCommentForm", () => {
         // Submit form
         fireEvent.click(button);
 
-        // Wait for async behaviour
-        // await waitFor(() => {
-        // expect(screen.getByLabelText(/comment message/i).value).toBe("");
-        // });
         await screen.findByDisplayValue(""); // wait for input to be cleared
 
         // Assertions
@@ -48,7 +44,7 @@ describe("CreateCommentForm", () => {
 
         const input = screen.getByLabelText(/comment message/i);
         fireEvent.change(input, { target: { value: "Test failure" } });
-        fireEvent.click(screen.getByRole("button", { name: /submit/i }));
+        fireEvent.click(screen.getByRole("button", { name: /comment/i }));
 
         // Wait for async error handling
         await screen.findByDisplayValue("Test failure"); // input should not clear

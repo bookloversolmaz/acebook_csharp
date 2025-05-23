@@ -1,6 +1,4 @@
-
-
-import { vi } from "vitest";
+import { vi, assert } from "vitest";
 import jwt from 'jsonwebtoken';
 import { getUserById} from "../../src/services/users";
 import { render, screen, waitFor, within} from "@testing-library/react";
@@ -8,16 +6,28 @@ import userEvent from "@testing-library/user-event";
 import { FeedPage } from "../../src/pages/Feed/FeedPage"; // Component being tested, displays the feed post
 import {getPosts, createPost } from "../../src/services/posts"; // import WHOLE module. Service function responsible for fetching posts from the backend
 import { useNavigate } from "react-router-dom"; // Hook from react router dom for programmatic navigation within app
-// import { Component } from "react";
+import { getCommentsByPostId } from "../../src/services/comments";
+// import { createComment } from "../../src/services/comments";
 
 
 // Mocking the getPosts and createpost service, which get and creates posts from the backend
 // Tells vitest to replace getsPosts function with the mock getPostsMock. mocks useEffect
 vi.mock("../../src/services/posts", () => {
   const getPostsMock = vi.fn(); // vi.fn() is a method for creating a mock function to track calls and define return values
-  const createPostMock = vi.fn(); 
+  const createPostMock = vi.fn();
   return { getPosts: getPostsMock, createPost: createPostMock };})
 
+vi.mock("../../src/services/comments", () => {
+  const getCommentsByPostIdMock = vi.fn();
+  const createCommentMock = vi.fn();
+  return { getCommentsByPostId: getCommentsByPostIdMock, createComment: createCommentMock };})
+  
+vi.mock("../../src/components/Comments/CreateCommentForm", () => {
+  return {
+    default: ({ onCommentCreated }) => (
+      <button onClick={() => onCommentCreated({ _id: "c3", message: "New Comment" })}>Comment</button>
+  )
+  }})
 
 // Mocking getUserById service
 vi.mock("../../src/services/users", () => {
@@ -185,4 +195,87 @@ describe("Feed Page", () => {
       expect(articles[1].textContent).toContain("Old Post");
       });
 
+
+  // eslint-disable-next-line vitest/expect-expect
+  test("displays comments under posts", async () => {
+    window.localStorage.setItem("token", "testToken");
+
+    getPosts.mockResolvedValue({
+      posts: [{ _id: "1", message: "Post with comments", userId: "u1" }],
+      token: "testToken"
+    });
+
+    getCommentsByPostId.mockResolvedValue({
+      comments: [
+        { _id: "c1", message: "First Comment" },
+        { _id: "c2", message: "Second Comment" }
+      ]
+  });
+
+    render(<FeedPage />);
+
+    const post = await screen.findByText("Post with comments"); // finds the post we added in the mock resolved value
+    const article = post.closest("article"); // locates the article containing the post - avoids other articles (posts) being selected
+
+    // Assert that the comment text is present within the selected article
+    assert.exists(within(article).queryByText("First Comment"));
+    assert.exists(within(article).queryByText("Second Comment"));
+});
+
+
+  test("displays comments with newest first", async () => {
+    window.localStorage.setItem("token", "testToken");
+    
+    getPosts.mockResolvedValue({
+      posts: [{ _id: "1", message: "Post with comments", userId: "u1" }],
+      token: "testToken"
+    });
+
+    getCommentsByPostId.mockResolvedValue({
+      comments: [
+        { _id: "c2", message: "Second Comment" },
+        { _id: "c1", message: "First Comment" },
+      ]
+    })
+
+    render(<FeedPage />);
+    const post = await screen.findByText("Post with comments"); // finds the post we added in the mock resolved value
+    const article = post.closest("article"); // locates the article containing the post - avoids other articles (posts) being selected
+    const commentElements = await within(article).findAllByTestId("comment-message");
+
+    expect(commentElements[0].textContent).toEqual("Second Comment");
+    expect(commentElements[1].textContent).toEqual("First Comment");
+  });
+
+  test("adds new comment to the top", async () => {
+    window.localStorage.setItem("token", "testToken");
+
+    getPosts.mockResolvedValue({
+      posts: [{ _id: "1", message: "Post with comment", userId: "u1" }],
+      token: "testToken"
+    });
+
+    getCommentsByPostId.mockResolvedValue({
+      comments: [
+        { _id: "c1", message: "Old Comment" }
+      ]
+    });
+
+    render(<FeedPage />);
+
+    const post = await screen.findByText("Post with comment"); // finds the post we added in the mock resolved value
+    const article = post.closest("article"); // locates the article containing the post - avoids other articles (posts) being selected
+
+    // Click to trigger new comment addition and rendering
+    screen.getByText("Comment").click();
+
+    await waitFor(() => {
+      const commentElements = within(article).getAllByTestId("comment-message");
+
+      expect(commentElements[0].textContent).toEqual("New Comment");
+      expect(commentElements[1].textContent).toEqual("Old Comment");  
+    })
+    
+
+  })
 });
