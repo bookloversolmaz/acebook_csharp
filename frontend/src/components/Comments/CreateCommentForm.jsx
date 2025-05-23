@@ -35,7 +35,7 @@ const CreateCommentForm = ({token, onCommentCreated, postId }) => {
                     placeholder="comment here..."
                     style={{ fontSize: "0.875rem" }}
                     />
-                    <button className="mt-2 btn btn-primary" id="submit" type="submit" value="Submit">Submit</button>
+                    <button className="mt-2 btn btn-primary" id="submit" type="submit" value="Submit">Comment</button>
                 </div>
             </form>
         </div>

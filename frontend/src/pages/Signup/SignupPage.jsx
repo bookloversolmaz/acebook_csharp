@@ -66,6 +66,7 @@ export const SignupPage = () => {
                   try {
                     await signup(username, email, password);
                     console.log("redirecting...:");
+                    console.log("SIGNUP success, navigating to login");
                     navigate("/login");
                 } catch (err) {
                   console.error(err);
@@ -123,7 +124,7 @@ export const SignupPage = () => {
           value={password}
           onChange={handlePasswordChange}
         />
-        <input role="submit-button" id="submit" type="submit" value="Submit" />
+        <button role="submit-button" id="submit" type="submit" value="Submit">Submit</button>
       </form>
     </>
   );
