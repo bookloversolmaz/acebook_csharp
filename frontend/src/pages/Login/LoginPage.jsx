@@ -1,23 +1,61 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { login } from "../../services/authentication";
+import { login, checkEmail } from "../../services/authentication";
 
 export const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const passValidator = (string) => {
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const numberRegex = /[0-9]/;
+    return (
+      specialCharRegex.test(string) &&
+      numberRegex.test(string)
+    );
+  };
+
+    const emailValidator = (string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return (
+      emailRegex.test(string)
+    );
+  };
+   async function CheckEmailExists(email){
+      try{
+        const response = await checkEmail(email)
+     
+           return response;
+      }catch(err){
+        console.error(err);
+      }
+    }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const token = await login(email, password);
-      localStorage.setItem("token", token);
-      navigate("/posts");
-    } catch (err) {
-      console.error(err);
-      navigate("/login");
-    }
+    const emailExists = await CheckEmailExists(email);
+    if (password.length >= 8 && passValidator(password) && emailValidator(email)){
+
+      if(emailExists == false){
+
+        alert("This email has not been registered. Please sign up first.")
+        navigate("/login");
+      }else{
+        try {
+        const token = await login(email, password);
+        localStorage.setItem("token", token);
+        navigate("/posts");
+      } catch (err) {
+        console.error(err);
+        navigate("/login");
+      }
+      }
+    }else{
+        alert("Your email or password is incorrect. Please provide correct information.")
+        navigate("/login");
+    }  
   };
 
   const handleEmailChange = (event) => {

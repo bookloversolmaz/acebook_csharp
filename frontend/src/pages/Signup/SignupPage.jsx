@@ -44,7 +44,7 @@ export const SignupPage = () => {
     async function CheckEmailExists(email){
     try{
       const response = await checkEmail(email)
-      //if response is true - username exists so return signup page and alert
+      //if response is true - email exists so return signup page and alert
       if(response == true){
         return false
       }else{
