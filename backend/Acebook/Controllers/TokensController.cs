@@ -18,29 +18,34 @@ public class TokensController : ControllerBase
     //LOG-IN ROUTE
     [Route("api/tokens")]
     [HttpPost]
-    public IActionResult Create([FromBody] UserCredentials credentials) {
-      AcebookDbContext dbContext = new AcebookDbContext();
-      
-       Regex validateEmailRegex = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
-    if (!validateEmailRegex.IsMatch(credentials.Email)) {
-        Console.WriteLine("Please provide a valid email");
-        return BadRequest("Invalid email format");
+    public IActionResult Create([FromBody] UserCredentials credentials)
+    {
+        AcebookDbContext dbContext = new AcebookDbContext();
+
+        Regex validateEmailRegex = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
+        if (!validateEmailRegex.IsMatch(credentials.Email))
+        {
+            Console.WriteLine("Please provide a valid email");
+            return BadRequest("Invalid email format");
+        }
+
+        // Find user by email
+        User? user = dbContext.Users.FirstOrDefault(u => u.Email == credentials.Email);
+        if (user == null)
+        {
+            Console.WriteLine("User not found");
+            return Unauthorized("Email not registered");
+        }
+
+        // Verify password
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(credentials.Password, user.Password);
+        if (!isPasswordValid)
+        {
+            Console.WriteLine("Incorrect password");
+            return Unauthorized("Incorrect password");
+        }
+        string token = TokenService.GenerateToken(user);
+        return Created("", new { token });
     }
 
-    // Find user by email
-    User? user = dbContext.Users.FirstOrDefault(u => u.Email == credentials.Email);
-    if (user == null) {
-        Console.WriteLine("User not found");
-        return Unauthorized("Email not registered");
-    }
-
-    // Verify password
-    bool isPasswordValid = BCrypt.Net.BCrypt.Verify(credentials.Password, user.Password);
-    if (!isPasswordValid) {
-        Console.WriteLine("Incorrect password");
-        return Unauthorized("Incorrect password");
-    }
-    string token = TokenService.GenerateToken(user);
-    return Created("", new { token });
-    }
 }
